@@ -20,7 +20,7 @@ int N6 = 1e7;
 int main(int argc, const char * argv[]){
     // Problem 10
     // Declaring vectors
-    int h = 100;
+    int h = 20;
     arma::vec time_avg_N_general = arma::zeros(h);
     arma::vec time_avg_N_general1 = arma::zeros(h);
     arma::vec time_avg_N_general2 = arma::zeros(h);
@@ -88,7 +88,7 @@ double specialized(int N){
     arma::vec g_prime = arma::ones(n);
     arma::vec v = arma::zeros(N);
     // Using the "initial conditions"
-    c_prime(0) = -1/2;
+    c_prime(0) = -1./2;
     g_prime(0) = g(0)/2;
     
     // General Thomas algorithm, exercise 7a)
