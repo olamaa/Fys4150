@@ -18,15 +18,8 @@ def readfile(filename):
     infile.close()
     return x, v_1, v_2, v_3
 
-x,v_1,v_2,v_3 = readfile('exercise_6.txt')
-plt.plot(x,v_1/np.amax(np.abs(v_1)),label=r'$\lambda_1$', linewidth=2, color='blue')
-plt.plot(x,v_2/np.amax(np.abs(v_2)),label=r'$\lambda_2$', linewidth=2, color='green')
-plt.plot(x,-1*np.array(v_3/np.amax(np.abs(v_3))),label=r'$\lambda_1$', linewidth=2, color='black')
-plt.legend()
-plt.savefig("eigenstates.pdf")
-
-
 def test(n):
+    new_x = np.linspace(0, 1, n+1)
     h = 1./n
     a = -1./h**2
     d = 2./h**2
@@ -46,9 +39,16 @@ def test(n):
         lambda_[lambda_val] = np.inf
     plt.ylabel('Normalized displacement')
     plt.xlabel('x/L')
-    plt.plot(x[1:-1],np.transpose(eigenvecs)[int(saved_indicies[0])], '--', color='yellow', linewidth=1)
-    plt.plot(x[1:-1],np.transpose(eigenvecs)[int(saved_indicies[1])], '--', color='yellow', linewidth=1)
-    plt.plot(x[1:-1],np.transpose(eigenvecs)[int(saved_indicies[2])], '--', color='yellow', linewidth=1)
-    plt.savefig("eigenstates_anal.pdf")
+    plt.plot(new_x[1:-1],np.transpose(eigenvecs)[int(saved_indicies[0])], '--', color='black', linewidth=1)
+    plt.plot(new_x[1:-1],np.transpose(eigenvecs)[int(saved_indicies[1])], '--', color='black', linewidth=1)
+    plt.plot(new_x[1:-1],np.transpose(eigenvecs)[int(saved_indicies[2])], '--', color='black', linewidth=1)
+
+for i in ['exercise_6_10.txt', 'exercise_6_100.txt']:
+    x,v_1,v_2,v_3 = readfile(i)
+    plt.plot(x,v_1/np.amax(np.abs(v_1)),label=r'$\lambda_1$', linewidth=2, color='blue')
+    plt.plot(x,v_2/np.amax(np.abs(v_2)),label=r'$\lambda_2$', linewidth=2, color='green')
+    plt.plot(x,-1*np.array(v_3/np.amax(np.abs(v_3))),label=r'$\lambda_3$', linewidth=2, color='red')
+    test(100)
+    plt.legend()
+    plt.savefig(i.replace('txt', 'pdf'))
     plt.show()
-test(100)

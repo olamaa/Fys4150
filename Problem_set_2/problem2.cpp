@@ -9,7 +9,12 @@
 #include <string>
 #include <cmath>
 
-arma::mat A_matrix(int &n)
+bool ex_3b = 1;
+bool ex_4b = 1;
+bool ex_6a = 1;
+bool ex_6b = 1;
+
+arma::mat A_matrix(int &n) // Problem 2
 {   int N = n-1;
     arma::mat A = arma::zeros(N,N);
     arma::vec x = arma::linspace(0,1,N+2);
@@ -41,11 +46,13 @@ void test(int &n){
             eigenvecs(i-1,element-1) = sin(element*i*M_PI/n);
         }
     }
+    std::cout <<"The analytical eigenvalues of our test matrix is: "<< std::endl;
     std::cout << lambda << std::endl;
+    std::cout << "And eigenvectors: " << std::endl;
     std::cout << arma::normalise(arma::trans(eigenvecs)) << std::endl;
 }
 
-double find_max(arma::mat& A, int &k, int &l){ //largest off-diagonal values (3a)
+double find_max(arma::mat& A, int &k, int &l){ //largest off-diagonal values (Problem 3a)
 //    Symmetric implies that it is sufficient to look at the upper triangle
     arma::mat upper_triang = arma::trimatu(A, 1);
     arma::mat non_diag = arma::abs(upper_triang);
@@ -57,7 +64,7 @@ double find_max(arma::mat& A, int &k, int &l){ //largest off-diagonal values (3a
 }
     
     
-void all(int &k, int &l, double &t, double &c, double &s, double &tau,arma::mat &R,arma::mat &S, arma::mat &A ){//4a)
+void all(int &k, int &l, double &t, double &c, double &s, double &tau,arma::mat &R,arma::mat &S, arma::mat &A ){ //(Problem 4a)
     int N = A.n_cols;
     int iterations = 0;
     while (find_max(A,k,l) > pow(10,-8)){
@@ -113,7 +120,7 @@ void all(int &k, int &l, double &t, double &c, double &s, double &tau,arma::mat 
     }
     int width = 40;
     int prec  = 16;
-    std::string newfilename = "exercise_6.txt";
+    std::string newfilename = "exercise_6_" + std::to_string(N+1) + ".txt";
     std::ofstream ofile_1;
     arma::vec x = arma::linspace(0, 1, N+2);
     arma::vec x_sub = x.subvec(1, N);
@@ -140,7 +147,7 @@ void all(int &k, int &l, double &t, double &c, double &s, double &tau,arma::mat 
 }
                       
 
-void test_matrix(){ //Test code (3b)
+void test_matrix(){ // Test matrix to find the biggest off-diagonal number (Problem 3b)
     arma::mat test_m = arma::eye(4, 4);
     test_m(3, 0) = 0.5;
     test_m(2, 1) = -0.7;
@@ -152,34 +159,56 @@ void test_matrix(){ //Test code (3b)
 }
 
 int main()
-{   int n = 100;
-    int N = n-1; // (4b, N = 6)
-    arma::mat A = A_matrix(n);
-    arma::vec eigval;
-    arma::mat eigvec;
-    arma::eig_sym(eigval, eigvec, A);
-    //std::cout << eigval << std::endl;
-    //std::cout << arma::normalise(-1*eigvec) << std::endl;
-    //test_matrix();
-    
-    double t = 0;
-    double c = 0;
-    double s = 0;
-    double tau = 0;
-    arma::mat R = arma::eye(N,N);
-    arma::mat S = arma::eye(N,N);
-    int k = 0;
-    int l = 0;
-    double test_val = find_max(A, k, l);
-    all(k,l,t,c,s,tau,R,S,A);
-    //test(n);
-    
-    
-    
-    // Generate random N*N matrix
-    //arma::mat B = arma::mat(N, N).randn();
-    // Symmetrize the matrix by reflecting the upper triangle to lower triangle
-    //B = arma::symmatu(B);
-    //all(k,l,t,c,s,tau,R,S,B);
+{   if (ex_4b == 1){
+    int N_4b = 6;
+    test(N_4b);
+    arma::mat B4 = A_matrix(N_4b);
+    arma::vec eigval_4b;
+    arma::mat eigvec_4b;
+    arma::eig_sym(eigval_4b, eigvec_4b, B4);
+    std::cout << "We also have the numerical eigenvalues: "<< std::endl;
+    std::cout << eigval_4b << std::endl;
+    std::cout << "And eigenvectors: " << std::endl;
+    std::cout << arma::normalise(-1*eigvec_4b) << std::endl;
+    }
+    if (ex_6a == 1){
+        int n = 10;
+        int N = n-1; // (4b, N = 6)
+        arma::mat A = A_matrix(n);
+        arma::vec eigval;
+        arma::mat eigvec;
+        arma::eig_sym(eigval, eigvec, A);
+        double t = 0;
+        double c = 0;
+        double s = 0;
+        double tau = 0;
+        arma::mat R = arma::eye(N,N);
+        arma::mat S = arma::eye(N,N);
+        int k = 0;
+        int l = 0;
+        double test_val = find_max(A, k, l);
+        all(k,l,t,c,s,tau,R,S,A);
+    }
+    if (ex_6b == 1){
+        int n = 100;
+        int N = n-1; // (4b, N = 6)
+        arma::mat A = A_matrix(n);
+        arma::vec eigval;
+        arma::mat eigvec;
+        arma::eig_sym(eigval, eigvec, A);
+        double t = 0;
+        double c = 0;
+        double s = 0;
+        double tau = 0;
+        arma::mat R = arma::eye(N,N);
+        arma::mat S = arma::eye(N,N);
+        int k = 0;
+        int l = 0;
+        double test_val = find_max(A, k, l);
+        all(k,l,t,c,s,tau,R,S,A);
+    }
+
+    if (ex_3b == 1){
+        test_matrix();}
     return 0;
 }
