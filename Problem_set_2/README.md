@@ -11,3 +11,5 @@ Run with: ./problem2
 The Python file must be run to produce the plots. Use the following command to compile and run:
 
 python3 plots.py
+
+The Jacobi's method is partially borrowed from Mortens lecture notes
