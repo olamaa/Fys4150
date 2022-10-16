@@ -93,11 +93,13 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
         std::string filename; 
         std::ofstream ofile_;
         for (int current_particle_uniq = 0; current_particle_uniq < (particles_).size(); current_particle_uniq++){
-            filename = "particle_" + std::to_string(current_particle_uniq) + "_with_interactions.txt";        
+            filename = "Euler_Cromer_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_with_interactions.txt";        
             ofile_.open(filename);
             ofile_<< std::setw(width) << (particles_)[current_particle_uniq].get_position()(0) <<
             std::setw(width) << (particles_)[current_particle_uniq].get_position()(1) << 
-            std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << 0 << std::endl; 
+            std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(0) <<
+            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(1) << 
+            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << 0 << std::endl; 
             ofile_.close();     
         }
 
@@ -105,16 +107,19 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
         arma::vec a;
         
         for (int time_iteration = 1;time_iteration<= time_steps;time_iteration++){
-            for (int current_particle_uniq_1 = 0;current_particle_uniq_1 < (particles_).size();current_particle_uniq_1++){
-                a = total_force_with_interactions(current_particle_uniq_1)/((particles_)[current_particle_uniq_1].get_mass());
-                (particles_)[current_particle_uniq_1].change_velocity((particles_)[current_particle_uniq_1].get_velocity()+a*dt);
-                (particles_)[current_particle_uniq_1].change_position(((particles_)[current_particle_uniq_1].get_position()+((particles_)[current_particle_uniq_1].get_velocity()*dt)));
-                filename = "particle_" + std::to_string(current_particle_uniq_1)+ "_with_interactions.txt";             
+            for (int current_particle_uniq = 0;current_particle_uniq < (particles_).size();current_particle_uniq++){
+                a = total_force_with_interactions(current_particle_uniq)/((particles_)[current_particle_uniq].get_mass());
+                (particles_)[current_particle_uniq].change_velocity((particles_)[current_particle_uniq].get_velocity()+a*dt);
+                (particles_)[current_particle_uniq].change_position(((particles_)[current_particle_uniq].get_position()+((particles_)[current_particle_uniq].get_velocity()*dt)));
+                //filename = "particle_" + std::to_string(current_particle_uniq_1)+ "_with_interactions.txt";             
+                filename = "Euler_Cromer_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_with_interactions.txt";
                 ofile_.open(filename, std::ofstream::app);
-                ofile_<< std::setw(width) << (particles_)[current_particle_uniq_1].get_position()(0) <<
-                std::setw(width) << (particles_)[current_particle_uniq_1].get_position()(1) << 
-                std::setw(width) << (particles_)[current_particle_uniq_1].get_position()(2) << std::setw(width) << std::to_string(time_iteration*dt) << std::endl;   
-                ofile_.close();
+                ofile_<< std::setw(width) << (particles_)[current_particle_uniq].get_position()(0) <<
+                std::setw(width) << (particles_)[current_particle_uniq].get_position()(1) << 
+                std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(0) <<
+                std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(1) << 
+                std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << std::to_string(dt*time_iteration) << std::endl; 
+                ofile_.close();     
                 }
             }
   
@@ -126,12 +131,14 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
         std::string filename; 
         std::ofstream ofile_;
         for (int current_particle_uniq = 0; current_particle_uniq < (particles_).size(); current_particle_uniq++){
-            filename = "particle_" + std::to_string(current_particle_uniq) + "_without_interactions.txt";           
+            //filename = "particle_" + std::to_string(current_particle_uniq) + "_without_interactions.txt";           
+            filename = "Euler_Cromer_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_without_interactions.txt";
             ofile_.open(filename);
             ofile_<< std::setw(width) << (particles_)[current_particle_uniq].get_position()(0) <<
             std::setw(width) << (particles_)[current_particle_uniq].get_position()(1) << 
-            std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << 0 << std::endl; 
-            //std::cout << "line_200" << std::endl;
+            std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(0) <<
+            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(1) << 
+            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << 0 << std::endl; 
             ofile_.close();     
         }
 
@@ -154,13 +161,15 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
                 //std::cout << "line_254" << std::endl;
                 (particles_)[current_particle_uniq_1].change_position(((particles_)[current_particle_uniq_1].get_position()+((particles_)[current_particle_uniq_1].get_velocity()*dt)));
                 std::cout << "line_257" << std::endl;
-                filename = "particle_" + std::to_string(current_particle_uniq_1)+ "_without_interactions.txt";
+                //filename = "particle_" + std::to_string(current_particle_uniq_1)+ "_without_interactions.txt";
+                filename = "Euler_Cromer_particle_" + std::to_string(current_particle_uniq_1) + "_n_steps_" + std::to_string(time_steps)+ "_without_interactions.txt";
                 ofile_.open(filename, std::ofstream::app);
                 ofile_<< std::setw(width) << (particles_)[current_particle_uniq_1].get_position()(0) <<
                 std::setw(width) << (particles_)[current_particle_uniq_1].get_position()(1) << 
-                std::setw(width) << (particles_)[current_particle_uniq_1].get_position()(2) << std::setw(width) << std::to_string(time_iteration*dt) << std::endl;   
-                ofile_.close();
-                std::cout << "line_256" << std::endl;
+                std::setw(width) << (particles_)[current_particle_uniq_1].get_position()(2) << std::setw(width) << (particles_)[current_particle_uniq_1].get_velocity()(0) <<
+                std::setw(width) << (particles_)[current_particle_uniq_1].get_velocity()(1) << 
+                std::setw(width) << (particles_)[current_particle_uniq_1].get_velocity()(2) << std::setw(width) << std::to_string(dt*time_iteration) << std::endl; 
+                ofile_.close();     
                 }
             }
 
@@ -200,12 +209,17 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
         std::ofstream ofile_;
         std::cout << "line 201" << std::endl;
         for (int current_particle_uniq = 0; current_particle_uniq < (particles_).size(); current_particle_uniq++){
-            filename = "particle_" + std::to_string(current_particle_uniq) + "_with_interactions_RK4.txt";        
+            //filename = "particle_" + std::to_string(current_particle_uniq) + "_with_interactions_RK4.txt";        
+            filename = "RK4_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_with_interactions.txt";
             ofile_.open(filename);
-            ofile_<< std::setw(width) << (particles_)[current_particle_uniq].get_position()(0) <<
+            ofile_<< 
+            std::setw(width) << (particles_)[current_particle_uniq].get_position()(0) <<
             std::setw(width) << (particles_)[current_particle_uniq].get_position()(1) << 
-            std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << 0 << std::endl; 
-            ofile_.close();     
+            std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << 
+            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(0) <<
+            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(1) << 
+            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << 0 << std::endl; 
+            ofile_.close();        
             }
 
         arma::mat pos = arma::zeros(particles_.size(),3);
@@ -215,63 +229,51 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
         for (int time_iteration = 1;time_iteration<= time_steps;time_iteration++){
 
 
-            std::cout << "time loop" << std::endl;
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
-                std::cout << "inside loop" << std::endl;
                 k_all_a[current_particle](0,arma::span::all) = arma::trans(total_force_with_interactions(current_particle)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](0,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
-            std::cout << "done first" << std::endl;
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 pos(current_particle,arma::span::all) = arma::trans(particles_[current_particle].get_position());
                 vel(current_particle,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 particles_[current_particle].change_velocity(particles_[current_particle].get_velocity()+arma::trans(dt/2*k_all_a[current_particle](0,arma::span::all)));
                 particles_[current_particle].change_position(particles_[current_particle].get_position()+arma::trans(dt/2*k_all_v[current_particle](0,arma::span::all)));
             }
-            std::cout << "done second" << std::endl;
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 k_all_a[current_particle](1,arma::span::all) = arma::trans(total_force_with_interactions(current_particle)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](1,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
-            std::cout << "done third" << std::endl;
             //changes back the positions and the velocities
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){
                 particles_[current_particle].change_position(arma::trans(pos(current_particle,arma::span::all)));
                 particles_[current_particle].change_velocity(arma::trans(vel(current_particle,arma::span::all)));
                 }
-            std::cout << "done fourth" << std::endl;
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 particles_[current_particle].change_velocity(particles_[current_particle].get_velocity()+arma::trans(dt/2*k_all_a[current_particle](1,arma::span::all)));
                 particles_[current_particle].change_position(particles_[current_particle].get_position()+arma::trans(dt/2*k_all_v[current_particle](1,arma::span::all)));        
                 }
-            std::cout << "done fifth" << std::endl;
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 k_all_a[current_particle](2,arma::span::all) = arma::trans(total_force_with_interactions(current_particle)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](2,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
-            std::cout << "done sixth" << std::endl;
             //changes back the positions and the velocities
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){
                 particles_[current_particle].change_position(arma::trans(pos(current_particle,arma::span::all)));
                 particles_[current_particle].change_velocity(arma::trans(vel(current_particle,arma::span::all)));
                 }
-            std::cout << "done seventh" << std::endl;    
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 particles_[current_particle].change_velocity(particles_[current_particle].get_velocity()+arma::trans(dt*k_all_a[current_particle](2,arma::span::all)));
                 particles_[current_particle].change_position(particles_[current_particle].get_position()+arma::trans(dt*k_all_v[current_particle](2,arma::span::all)));        
                 }
-            std::cout << "done eight" << std::endl;
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 k_all_a[current_particle](3,arma::span::all) = arma::trans(total_force_with_interactions(current_particle)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](3,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
-            std::cout << "done nineth" << std::endl;    
             //changes back the positions and the velocities
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){
                 particles_[current_particle].change_position(arma::trans(pos(current_particle,arma::span::all)));
                 particles_[current_particle].change_velocity(arma::trans(vel(current_particle,arma::span::all)));
                 }
-            std::cout << "done tenth" << std::endl;    
             //finally updates the positions and the velocities
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 update_vel = arma::trans(particles_[current_particle].get_velocity())+dt/6*(k_all_a[current_particle](0,arma::span::all)+
@@ -282,12 +284,15 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
 
                 particles_[current_particle].change_velocity(arma::trans(update_vel));
                 particles_[current_particle].change_position(arma::trans(update_pos));        
-                filename = "particle_" + std::to_string(current_particle) + "_with_interactions_RK4.txt";           
+                //filename = "particle_" + std::to_string(current_particle) + "_with_interactions_RK4.txt";           
+                filename = "RK4_particle_" + std::to_string(current_particle) + "_n_steps_" + std::to_string(time_steps)+ "_with_interactions.txt";
                 ofile_.open(filename, std::ofstream::app);
                 ofile_<< std::setw(width) << (particles_)[current_particle].get_position()(0) <<
                 std::setw(width) << (particles_)[current_particle].get_position()(1) << 
-                std::setw(width) << (particles_)[current_particle].get_position()(2) << std::setw(width) << std::to_string(time_iteration*dt) << std::endl; 
-                ofile_.close();     
+                std::setw(width) << (particles_)[current_particle].get_position()(2) << std::setw(width) << (particles_)[current_particle].get_velocity()(0) <<
+                std::setw(width) << (particles_)[current_particle].get_velocity()(1) << 
+                std::setw(width) << (particles_)[current_particle].get_velocity()(2) << std::setw(width) << std::to_string(dt*time_iteration) << std::endl; 
+                ofile_.close();       
                 }
     
             }
@@ -296,14 +301,16 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
     else{
         std::string filename; 
         std::ofstream ofile_;
-        std::cout << "line 201" << std::endl;
         for (int current_particle_uniq = 0; current_particle_uniq < (particles_).size(); current_particle_uniq++){
-            filename = "particle_" + std::to_string(current_particle_uniq) + "_without_interactions_RK4.txt";        
+            //filename = "particle_" + std::to_string(current_particle_uniq) + "_without_interactions_RK4.txt";        
+            filename = "RK4_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_without_interactions.txt";
             ofile_.open(filename);
             ofile_<< std::setw(width) << (particles_)[current_particle_uniq].get_position()(0) <<
             std::setw(width) << (particles_)[current_particle_uniq].get_position()(1) << 
-            std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << 0 << std::endl; 
-            ofile_.close();     
+            std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(0) <<
+            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(1) << 
+            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << 0 << std::endl; 
+            ofile_.close();         
             }
 
         arma::mat pos = arma::zeros(particles_.size(),3);
@@ -313,63 +320,52 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
         for (int time_iteration = 1;time_iteration<= time_steps;time_iteration++){
 
 
-            std::cout << "time loop" << std::endl;
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 std::cout << "inside loop" << std::endl;
                 k_all_a[current_particle](0,arma::span::all) = arma::trans(total_force_without_interactions(current_particle)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](0,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
-            std::cout << "done first" << std::endl;
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 pos(current_particle,arma::span::all) = arma::trans(particles_[current_particle].get_position());
                 vel(current_particle,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 particles_[current_particle].change_velocity(particles_[current_particle].get_velocity()+arma::trans(dt/2*k_all_a[current_particle](0,arma::span::all)));
                 particles_[current_particle].change_position(particles_[current_particle].get_position()+arma::trans(dt/2*k_all_v[current_particle](0,arma::span::all)));
             }
-            std::cout << "done second" << std::endl;
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 k_all_a[current_particle](1,arma::span::all) = arma::trans(total_force_without_interactions(current_particle)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](1,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
-            std::cout << "done third" << std::endl;
             //changes back the positions and the velocities
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){
                 particles_[current_particle].change_position(arma::trans(pos(current_particle,arma::span::all)));
                 particles_[current_particle].change_velocity(arma::trans(vel(current_particle,arma::span::all)));
                 }
-            std::cout << "done fourth" << std::endl;
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 particles_[current_particle].change_velocity(particles_[current_particle].get_velocity()+arma::trans(dt/2*k_all_a[current_particle](1,arma::span::all)));
                 particles_[current_particle].change_position(particles_[current_particle].get_position()+arma::trans(dt/2*k_all_v[current_particle](1,arma::span::all)));        
                 }
-            std::cout << "done fifth" << std::endl;
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 k_all_a[current_particle](2,arma::span::all) = arma::trans(total_force_without_interactions(current_particle)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](2,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
-            std::cout << "done sixth" << std::endl;
             //changes back the positions and the velocities
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){
                 particles_[current_particle].change_position(arma::trans(pos(current_particle,arma::span::all)));
                 particles_[current_particle].change_velocity(arma::trans(vel(current_particle,arma::span::all)));
                 }
-            std::cout << "done seventh" << std::endl;    
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 particles_[current_particle].change_velocity(particles_[current_particle].get_velocity()+arma::trans(dt*k_all_a[current_particle](2,arma::span::all)));
                 particles_[current_particle].change_position(particles_[current_particle].get_position()+arma::trans(dt*k_all_v[current_particle](2,arma::span::all)));        
                 }
-            std::cout << "done eight" << std::endl;
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 k_all_a[current_particle](3,arma::span::all) = arma::trans(total_force_without_interactions(current_particle)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](3,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
-            std::cout << "done nineth" << std::endl;    
             //changes back the positions and the velocities
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){
                 particles_[current_particle].change_position(arma::trans(pos(current_particle,arma::span::all)));
                 particles_[current_particle].change_velocity(arma::trans(vel(current_particle,arma::span::all)));
                 }
-            std::cout << "done tenth" << std::endl;    
             //finally updates the positions and the velocities
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 update_vel = arma::trans(particles_[current_particle].get_velocity())+dt/6*(k_all_a[current_particle](0,arma::span::all)+
@@ -380,12 +376,15 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
 
                 particles_[current_particle].change_velocity(arma::trans(update_vel));
                 particles_[current_particle].change_position(arma::trans(update_pos));        
-                filename = "particle_" + std::to_string(current_particle) + "_without_interactions_RK4.txt";           
+                //filename = "particle_" + std::to_string(current_particle) + "_without_interactions_RK4.txt";           
+                filename = "RK4_particle_" + std::to_string(current_particle) + "_n_steps_" + std::to_string(time_steps)+ "_without_interactions.txt";
                 ofile_.open(filename, std::ofstream::app);
                 ofile_<< std::setw(width) << (particles_)[current_particle].get_position()(0) <<
                 std::setw(width) << (particles_)[current_particle].get_position()(1) << 
-                std::setw(width) << (particles_)[current_particle].get_position()(2) << std::setw(width) << std::to_string(time_iteration*dt) << std::endl; 
-                ofile_.close();     
+                std::setw(width) << (particles_)[current_particle].get_position()(2) << std::setw(width) << (particles_)[current_particle].get_velocity()(0) <<
+                std::setw(width) << (particles_)[current_particle].get_velocity()(1) << 
+                std::setw(width) << (particles_)[current_particle].get_velocity()(2) << std::setw(width) << std::to_string(dt*time_iteration) << std::endl; 
+                ofile_.close();         
                 }
     
             }
