@@ -51,6 +51,8 @@ public:
 
   //// Add a particle to the trap
   void add_particle(Particle& new_particle);
+  
+  void remove_all_particles();
 //
   //External electric field at point r=(x,y,z)
   arma::vec external_E_field_on_current_particle(int current_particle);

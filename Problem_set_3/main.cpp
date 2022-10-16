@@ -1,7 +1,9 @@
 #include<particle.hpp>
 #include<armadillo>
 #include<iostream>
+#include<vector>
 #include<penningtrap.hpp>
+#include<cmath>
 
 
 
@@ -29,6 +31,10 @@ int main()
 
    
    std::cout << mass_Ca_II << std::endl;
+   arma::vec initial_position1 = {20.,0.,20.};
+   arma::vec initial_velocity1 = {0.,25.,0.};
+   arma::vec initial_position2 = {25.,25.,0.};
+   arma::vec initial_velocity2 ={0.,40.,5.};
    arma::vec position1 = {20.,0.,20.};
    arma::vec velocity1 = {0.,25.,0.};
    arma::vec position2 = {25.,25.,0.};
@@ -39,9 +45,43 @@ int main()
    test_trap.add_particle(test_particle_1);
    test_trap.add_particle(test_particle_2);
 
-
+    
    int time = 50;
-   test_trap.RK4(time,4000,"yes"); //"yes" for interactions
+
+   //std::vector<int> = {4000,}
+   for (int i=2;i<6;i++){
+    test_trap.RK4(time,1000*pow(2,i),"yes");
+    test_trap.remove_all_particles();
+    test_particle_1.change_position(initial_position1);
+    test_particle_1.change_velocity(initial_velocity1);
+    test_particle_2.change_position(initial_position2);
+    test_particle_2.change_velocity(initial_velocity2);
+    test_trap.add_particle(test_particle_1);
+    test_trap.add_particle(test_particle_2);
+    
+    test_trap.RK4(time,1000*pow(2,i),"no");
+    test_trap.remove_all_particles();
+    test_particle_1.change_position(initial_position1);
+    test_particle_1.change_velocity(initial_velocity1);
+    test_particle_2.change_position(initial_position2);
+    test_particle_2.change_velocity(initial_velocity2);
+    test_trap.add_particle(test_particle_1);
+    test_trap.add_particle(test_particle_2);
+    
+    test_trap.forward_Euler(time,1000*pow(2,i),"yes");
+    test_trap.remove_all_particles();
+    test_particle_1.change_position(initial_position1);
+    test_particle_1.change_velocity(initial_velocity1);
+    test_particle_2.change_position(initial_position2);
+    test_particle_2.change_velocity(initial_velocity2);
+    test_trap.add_particle(test_particle_1);
+    test_trap.add_particle(test_particle_2);
+    
+    test_trap.forward_Euler(time,1000*pow(2,i),"no");
+
+   
+   }
+   //test_trap.RK4(time,4000,"yes"); //"yes" for interactions
 
 
    return 0;

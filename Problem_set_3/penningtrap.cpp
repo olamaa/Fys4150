@@ -32,8 +32,21 @@ void PenningTrap::add_particle(Particle& new_particle){
     ////std::vector<arma::mat> k_s;
     //k_all.push_back(k1);
     //k_all.push_back(k2);
+}
 
-
+void PenningTrap::remove_all_particles(){
+    
+    particles_ = {};
+//void PenningTrap::replace__particles(Particle& new_particle){
+//    particles_
+//    particles_.push_back(new_particle);
+//    //arma::mat k1 = {{1,0,0},{2,0,0},{3,0,0},{4,0,0}};
+//    //arma::mat k2 = {{5,0,0},{6,0,0},{7,0,0},{8,0,0}};
+//    ////std::vector<arma::mat> k_s;
+//    //k_all.push_back(k1);
+//    //k_all.push_back(k2);
+//
+//
 }
 
 
