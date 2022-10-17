@@ -26,7 +26,6 @@ int main()
    double omega_0_squared =  pow(q,2)*pow(B0,2)/pow(mass_Ca_II,2);
    double omega_z_squared = 2*q*V0/(mass_Ca_II*pow(d,2));
    
-   std::cout << "hello" << std::endl;
 
    
    std::cout << mass_Ca_II << std::endl;
@@ -76,7 +75,6 @@ int main()
     test_trap.add_particle(test_particle_1);
     test_trap.add_particle(test_particle_2);
     
-    test_trap.forward_Euler(time,1000*pow(2,i),"no");
 
    
    }
