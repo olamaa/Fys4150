@@ -45,7 +45,7 @@ int main()
    test_trap.add_particle(test_particle_2);
 
     
-   int time = 50;
+   int time = 60;
 
    //std::vector<int> = {4000,}
    for (int i=2;i<6;i++){
