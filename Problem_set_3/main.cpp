@@ -5,7 +5,6 @@
 #include<penningtrap.hpp>
 #include<cmath>
 
-//experimental git
 
 int main()
 {   // Magnetic field strength (T) and electric potential (V)
