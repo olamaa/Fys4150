@@ -159,7 +159,6 @@ pair_plotter_3d(p1w[0], p1w_RK4[0], ax=ax) # particle 1 with interaction euler+r
 
 
 
-
 x0_wo_8000, y0_wo_8000, z0_wo_8000, vx0_wo_8000, vy0_wo_8000, vz0_wo_8000, t0_wo_8000 = readfile(p0wo_RK4[1])
 x0_w_8000, y0_w_8000, z0_w_8000, vx0_w_8000, vy0_w_8000, vz0_w_8000, t0_w_8000 = readfile(p0w_RK4[1])
 x1_wo_8000, y1_wo_8000, z1_wo_8000, vx1_wo_8000, vy1_wo_8000, vz1_wo_8000, t1_wo_8000 = readfile(p1wo_RK4[1])
@@ -180,51 +179,78 @@ x1_w_32000, y1_w_32000, z1_w_32000, vx1_w_32000, vy1_w_32000, vz1_w_32000, t1_w_
 
 
 ### With interaction
-Ex0_wo_4000, Ey0_wo_4000, Ez0_wo_4000, Evx0_wo_4000, Evy0_wo_4000, Evz0_wo_4000, Et0_wo_4000 = readfile(p0w[0])
-Ex0_wo_8000, Ey0_wo_8000, Ez0_wo_8000, Evx0_wo_8000, Evy0_wo_8000, Evz0_wo_8000, Et0_wo_8000 = readfile(p0w[1])
-Ex0_wo_16000, Ey0_wo_16000, Ez0_wo_16000, Evx0_wo_16000, Evy0_wo_16000, Evz0_wo_16000, Et0_wo_16000 = readfile(p0w[2])
-Ex0_wo_32000, Ey0_wo_32000, Ez0_wo_32000, Evx0_wo_32000, Evy0_wo_32000, Evz0_wo_32000, Et0_wo_32000 = readfile(p0w[3])
+Ex0_wo_4000, Ey0_wo_4000, Ez0_wo_4000, Evx0_wo_4000, Evy0_wo_4000, Evz0_wo_4000, Et0_wo_4000 = readfile(p0wo[0])
+Ex0_wo_8000, Ey0_wo_8000, Ez0_wo_8000, Evx0_wo_8000, Evy0_wo_8000, Evz0_wo_8000, Et0_wo_8000 = readfile(p0wo[1])
+Ex0_wo_16000, Ey0_wo_16000, Ez0_wo_16000, Evx0_wo_16000, Evy0_wo_16000, Evz0_wo_16000, Et0_wo_16000 = readfile(p0wo[2])
+Ex0_wo_32000, Ey0_wo_32000, Ez0_wo_32000, Evx0_wo_32000, Evy0_wo_32000, Evz0_wo_32000, Et0_wo_32000 = readfile(p0wo[3])
 
-def z_func(t, V0):
-    q = 1
-    m = 40.0775
-    d = 500
-    return np.float64(20*np.cos(np.sqrt(2*q*V0/m*d**2)*t))
+q = 1
+m = 40.0775
+v0_d_2 = 9.65
+B0 = 9.65*10
+omega_0 = q*B0/m
+omega_z_square = 2*q*v0_d_2/m
 
-t4 = np.linspace(0, 50, len(t0_wo_4000))
-t8 = np.linspace(0, 50, len(t0_wo_8000))
-t16 = np.linspace(0, 50, len(t0_wo_16000))
-t32 = np.linspace(0, 50, len(t0_wo_32000))
+def z_func(t):
+    return 20*np.cos(np.sqrt(omega_z_square)*t)
+def relative_error(x_num, y_num, z_num, x, y, z, t):
+    r_numerical = np.sqrt(x_num**2 + y_num**2 + z_num**2)
+    r_analytical = np.sqrt(x**2 + y**2 + z**2)
+    return np.abs(r_analytical - r_numerical)/r_analytical
 
-print(z_func(t0_wo_4000, V0 = 2.41*10**6))
-print(z_func(tx, V0 = 2.41*10**6))
+def f(initial_position, initial_velocity, t):
+    omega_plus = (omega_0 + np.sqrt(omega_0**2 - 2*omega_z_square))/2
+    omega_minus = (omega_0 - np.sqrt(omega_0**2 - 2*omega_z_square))/2
+    A_plus = (initial_velocity + omega_minus*initial_position)/(omega_minus - omega_plus)
+    A_minus = -(initial_velocity + omega_plus*initial_position)/(omega_minus - omega_plus)
+    return A_plus*np.exp(-1.j*(omega_plus*t)) + A_minus*np.exp(-1.j*(omega_minus*t))
 
-def relative_error(z, t):
-    return np.abs(1-(z/z_func(t, 20)))
+"""plt.figure()
+time = np.linspace(0, 50, 4001)
+x = np.real(f(20, 25, time))
+y = np.imag(f(20, 25, time))
+z = z_func(time)
+plt.semilogy(t0_wo_4000, relative_error(x0_wo_4000, y0_wo_4000, z0_wo_4000, x, y, z, t0_wo_4000))
+plt.show()"""
 
+#str(input('Particle 1 wo interactions?'))
 # Relative error for RungeKutta
-fig, ax = plt.subplots(2, 2, sharey=True, sharex=True)
-ax[0][0].semilogy(t1_w_4000, relative_error(z1_w_4000, t1_w_4000), label='n=4000')
-ax[0][1].semilogy(t1_w_8000, relative_error(z1_w_8000, t1_w_8000), label='n=8000')
-ax[1][0].semilogy(t1_w_16000, relative_error(z1_w_16000, t1_w_16000), label='n=16000')
-ax[1][1].semilogy(t1_w_32000, relative_error(z1_w_32000, t1_w_32000), label='n=32000')
+fig, ax = plt.subplots(2, 2, figsize=(10,7), sharex=True)
 
-ax[0][0].semilogy(Et0_wo_4000, relative_error(Ez0_wo_4000, Et0_wo_4000), label='E, n=4000', alpha=0.4, color='red')
-ax[0][1].semilogy(Et0_wo_8000, relative_error(Ez0_wo_8000, Et0_wo_8000), label='E, n=8000', alpha=0.4, color='red')
-ax[1][0].semilogy(Et0_wo_16000, relative_error(Ez0_wo_16000, Et0_wo_16000), label='E, n=16000', alpha=0.4, color='red')
-ax[1][1].semilogy(Et0_wo_32000, relative_error(Ez0_wo_32000, Et0_wo_32000), label='E, n=32000', alpha=0.4, color='red')
+ax[0][0].set_title('RungeKutta4')
+ax[0][0].set_ylim(-0.1, 1.3)
+ax[0][0].set_ylabel(r"Relative error [$r_{err}$]")
+ax[0][0].plot(t0_wo_4000, relative_error(x0_wo_4000, y0_wo_4000, z0_wo_4000, np.real(f(20, 25, t0_wo_4000)), np.imag(f(20, 25, t0_wo_4000)), z_func(t0_wo_4000),  t0_wo_4000), label=r'$n=4\cdot 10^3$')
+ax[0][0].plot(t0_wo_8000, relative_error(x0_wo_8000, y0_wo_8000, z0_wo_8000, np.real(f(20, 25, t0_wo_8000)), np.imag(f(20, 25, t0_wo_8000)), z_func(t0_wo_8000),  t0_wo_8000), label=r'$n=8\cdot 10^3$')
+ax[0][0].plot(t0_wo_16000, relative_error(x0_wo_16000, y0_wo_16000, z0_wo_16000, np.real(f(20, 25, t0_wo_16000)), np.imag(f(20, 25, t0_wo_16000)), z_func(t0_wo_16000),  t0_wo_16000), label=r'$n=1.6\cdot 10^4$')
+ax[0][0].plot(t0_wo_32000, relative_error(x0_wo_32000, y0_wo_32000, z0_wo_32000, np.real(f(20, 25, t0_wo_32000)), np.imag(f(20, 25, t0_wo_32000)), z_func(t0_wo_32000),  t0_wo_32000), label=r'$n=3.2\cdot 10^4$', linestyle='dashed')
+
+ax[0][1].set_title('Forward Euler')
+ax[0][1].set_ylim(-0.1, 1.3)
+ax[0][1].plot(Et0_wo_4000, relative_error(Ex0_wo_4000, Ey0_wo_4000, Ez0_wo_4000, np.real(f(20, 25, Et0_wo_4000)), np.imag(f(20, 25, Et0_wo_4000)), z_func(Et0_wo_4000),  Et0_wo_4000), label=r'$n=4\cdot 10^3$')
+ax[0][1].plot(Et0_wo_8000, relative_error(Ex0_wo_8000, Ey0_wo_8000, Ez0_wo_8000, np.real(f(20, 25, Et0_wo_8000)), np.imag(f(20, 25, Et0_wo_8000)), z_func(Et0_wo_8000),  Et0_wo_8000), label=r'$n=8\cdot 10^3$')
+ax[0][1].plot(Et0_wo_16000, relative_error(Ex0_wo_16000, Ey0_wo_16000, Ez0_wo_16000, np.real(f(20, 25, Et0_wo_16000)), np.imag(f(20, 25, Et0_wo_16000)), z_func(Et0_wo_16000),  Et0_wo_16000), label=r'$n=1.6\cdot 10^4$')
+ax[0][1].plot(Et0_wo_32000, relative_error(Ex0_wo_32000, Ey0_wo_32000, Ez0_wo_32000, np.real(f(20, 25, Et0_wo_32000)), np.imag(f(20, 25, Et0_wo_32000)), z_func(Et0_wo_32000),  Et0_wo_32000), label=r'$n=3.2\cdot 10^4$')
+
+ax[1][0].set_ylim(10**(-15), 10**(1))
+ax[1][0].set_ylabel(r"Relative error [$\log_{10}(r_{err})$]")
+ax[1][0].set_xlabel(r"Time [$\mu$s]")
+ax[1][0].semilogy(t0_wo_4000, relative_error(x0_wo_4000, y0_wo_4000, z0_wo_4000, np.real(f(20, 25, t0_wo_4000)), np.imag(f(20, 25, t0_wo_4000)), z_func(t0_wo_4000),  t0_wo_4000), label='n=4000')
+ax[1][0].semilogy(t0_wo_8000, relative_error(x0_wo_8000, y0_wo_8000, z0_wo_8000, np.real(f(20, 25, t0_wo_8000)), np.imag(f(20, 25, t0_wo_8000)), z_func(t0_wo_8000),  t0_wo_8000), label='n=8000')
+ax[1][0].semilogy(t0_wo_16000, relative_error(x0_wo_16000, y0_wo_16000, z0_wo_16000, np.real(f(20, 25, t0_wo_16000)), np.imag(f(20, 25, t0_wo_16000)), z_func(t0_wo_16000),  t0_wo_16000), label='n=16000')
+ax[1][0].semilogy(t0_wo_32000, relative_error(x0_wo_32000, y0_wo_32000, z0_wo_32000, np.real(f(20, 25, t0_wo_32000)), np.imag(f(20, 25, t0_wo_32000)), z_func(t0_wo_32000),  t0_wo_32000), label='n=32000', linestyle='dashed')
+
+ax[1][1].set_ylim(10**(-15), 10**(1))
+ax[1][1].set_xlabel(r"Time [$\mu$s]")
+ax[1][1].semilogy(Et0_wo_4000, relative_error(Ex0_wo_4000, Ey0_wo_4000, Ez0_wo_4000, np.real(f(20, 25, Et0_wo_4000)), np.imag(f(20, 25, Et0_wo_4000)), z_func(Et0_wo_4000),  Et0_wo_4000), label='n=4000')
+ax[1][1].semilogy(Et0_wo_8000, relative_error(Ex0_wo_8000, Ey0_wo_8000, Ez0_wo_8000, np.real(f(20, 25, Et0_wo_8000)), np.imag(f(20, 25, Et0_wo_8000)), z_func(Et0_wo_8000),  Et0_wo_8000), label='n=8000')
+ax[1][1].semilogy(Et0_wo_16000, relative_error(Ex0_wo_16000, Ey0_wo_16000, Ez0_wo_16000, np.real(f(20, 25, Et0_wo_16000)), np.imag(f(20, 25, Et0_wo_16000)), z_func(Et0_wo_16000),  Et0_wo_16000), label='n=16000')
+ax[1][1].semilogy(Et0_wo_32000, relative_error(Ex0_wo_32000, Ey0_wo_32000, Ez0_wo_32000, np.real(f(20, 25, Et0_wo_32000)), np.imag(f(20, 25, Et0_wo_32000)), z_func(Et0_wo_32000),  Et0_wo_32000), label='n=32000')
 
 ax[0][0].legend(loc='upper left')
 ax[0][1].legend(loc='upper left')
-ax[1][0].legend(loc='upper left')
-ax[1][1].legend(loc='upper left')
-
-# Relative error for the Euler method
-"""fig, ax = plt.subplots(2, 2, sharey=True, sharex=True)
-ax[0][0].legend()
-ax[0][1].legend()
-ax[1][0].legend()
-ax[1][1].legend()"""
+#ax[0][1].legend(loc='lower right')
+#ax[1][1].legend(loc='lower right')
 plt.show()
 
 
