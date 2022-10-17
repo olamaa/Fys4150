@@ -26,7 +26,6 @@ int main()
    double omega_0_squared =  pow(q,2)*pow(B0,2)/pow(mass_Ca_II,2);
    double omega_z_squared = 2*q*V0/(mass_Ca_II*pow(d,2));
    
-   std::cout << "hello" << std::endl;
 
    
    std::cout << mass_Ca_II << std::endl;
@@ -82,7 +81,6 @@ int main()
    }
    //test_trap.RK4(time,4000,"yes"); //"yes" for interactions
 
-   int fun = 0;
    return 0;
 
 }
