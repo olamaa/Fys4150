@@ -45,12 +45,7 @@ int main()
    test_trap.add_particle(test_particle_2);
 
     
-<<<<<<< HEAD
-   int time = 100;
-=======
-   int time = 50;
-   int test_variable_2 = 10;
->>>>>>> working
+   int time = 60;
 
    //std::vector<int> = {4000,}
    for (int i=2;i<6;i++){
@@ -87,7 +82,7 @@ int main()
    }
    //test_trap.RK4(time,4000,"yes"); //"yes" for interactions
 
-
+   int fun = 0;
    return 0;
 
 }
