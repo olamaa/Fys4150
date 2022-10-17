@@ -75,7 +75,7 @@ int main()
     test_trap.add_particle(test_particle_1);
     test_trap.add_particle(test_particle_2);
     
-
+    test_trap.forward_Euler(time,1000*pow(2,i),"no");
    
    }
    //test_trap.RK4(time,4000,"yes"); //"yes" for interactions
