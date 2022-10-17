@@ -46,6 +46,7 @@ int main()
 
     
    int time = 50;
+   int test_variable = 10;
 
    //std::vector<int> = {4000,}
    for (int i=2;i<6;i++){
