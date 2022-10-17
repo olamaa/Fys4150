@@ -26,7 +26,7 @@ int main()
    double omega_0_squared =  pow(q,2)*pow(B0,2)/pow(mass_Ca_II,2);
    double omega_z_squared = 2*q*V0/(mass_Ca_II*pow(d,2));
    
-   
+   std::cout << "hello" << std::endl;
 
    
    std::cout << mass_Ca_II << std::endl;
@@ -45,7 +45,7 @@ int main()
    test_trap.add_particle(test_particle_2);
 
     
-   int time = 60;
+   int time = 50;
 
    //std::vector<int> = {4000,}
    for (int i=2;i<6;i++){
