@@ -20,6 +20,7 @@ PenningTrap::PenningTrap(double B0, double V0, double d)
     d_ = d;
     prefactor_e_field_= V0_/(pow(d_,2));
     b_field_unit_vector_ = {0,0,1};
+    //f_ = 1;
  
 }
 
@@ -27,40 +28,34 @@ PenningTrap::PenningTrap(double B0, double V0, double d)
 void PenningTrap::add_particle(Particle& new_particle){
     
     particles_.push_back(new_particle);
-    //arma::mat k1 = {{1,0,0},{2,0,0},{3,0,0},{4,0,0}};
-    //arma::mat k2 = {{5,0,0},{6,0,0},{7,0,0},{8,0,0}};
-    ////std::vector<arma::mat> k_s;
-    //k_all.push_back(k1);
-    //k_all.push_back(k2);
 }
 
 void PenningTrap::remove_all_particles(){
     
     particles_ = {};
-//void PenningTrap::replace__particles(Particle& new_particle){
-//    particles_
-//    particles_.push_back(new_particle);
-//    //arma::mat k1 = {{1,0,0},{2,0,0},{3,0,0},{4,0,0}};
-//    //arma::mat k2 = {{5,0,0},{6,0,0},{7,0,0},{8,0,0}};
-//    ////std::vector<arma::mat> k_s;
-//    //k_all.push_back(k1);
-//    //k_all.push_back(k2);
-//
-//
 }
 
 
 //// External electric field at point r=(x,y,z)
-arma::vec PenningTrap::external_E_field_on_current_particle(int current_particle){
-    //std::cout << "external_e_field" << std::endl;
+arma::vec PenningTrap::external_E_field_on_current_particle(int current_particle,double time){
     r = particles_[current_particle].get_position();
-    //std::cout << "position_in_external_E_field" << std::endl;
-    //std::cout << r << std::endl;
     coordinate_dependent_vector = {r(0),r(1),-2*r(2)};
-    //std::cout << "external_e_field_end" << std::endl;
+    if (f_.size() == 0){
+    //r = particles_[current_particle].get_position();
+    //coordinate_dependent_vector = {r(0),r(1),-2*r(2)};
     return prefactor_e_field_*coordinate_dependent_vector;
+    }
+    
+    else{
+        if (arma::norm(r,2) > d_){
+            return {0,0,0};
+            }
+        else{
+            return prefactor_e_field_*(1+f_value_*cos(omega_V_value_*time))*coordinate_dependent_vector;
+            }
+        
+        }
 }
-
 
 
 arma::vec PenningTrap::external_B_field_on_current_particle(){
@@ -86,13 +81,13 @@ arma::vec PenningTrap::internal_E_field_on_current_particle(int current_particle
     return 1.38935333*pow(10,5)*sum;
 }
 
-arma::vec PenningTrap::total_force_with_interactions(int current_particle){
-return (particles_)[current_particle].get_charge()*(external_E_field_on_current_particle(current_particle) + internal_E_field_on_current_particle(current_particle))
+arma::vec PenningTrap::total_force_with_interactions(int current_particle, double time){
+return (particles_)[current_particle].get_charge()*(external_E_field_on_current_particle(current_particle,time) + internal_E_field_on_current_particle(current_particle))
     + arma::cross((particles_)[current_particle].get_charge()*(particles_)[current_particle].get_velocity(),external_B_field_on_current_particle());
 }
 
-arma::vec PenningTrap::total_force_without_interactions(int current_particle){
-return (particles_)[current_particle].get_charge()*(external_E_field_on_current_particle(current_particle))
+arma::vec PenningTrap::total_force_without_interactions(int current_particle,double time){
+return (particles_)[current_particle].get_charge()*(external_E_field_on_current_particle(current_particle,time))
     + arma::cross((particles_)[current_particle].get_charge()*(particles_)[current_particle].get_velocity(),external_B_field_on_current_particle());
 }
 
@@ -101,6 +96,7 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
 
     double dt = time/time_steps;
     int width = 40;
+    int prec = 16;
 
     if (with_or_without_interactions == "yes"){
         std::string filename; 
@@ -108,11 +104,11 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
         for (int current_particle_uniq = 0; current_particle_uniq < (particles_).size(); current_particle_uniq++){
             filename = "Euler_Cromer_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_with_interactions.txt";        
             ofile_.open(filename);
-            ofile_<< std::setw(width) << (particles_)[current_particle_uniq].get_position()(0) <<
-            std::setw(width) << (particles_)[current_particle_uniq].get_position()(1) << 
-            std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(0) <<
-            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(1) << 
-            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << 0 << std::endl; 
+            ofile_<< std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(0) <<
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(1) << 
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(0) <<
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(1) << 
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << std::setprecision(prec) << 0 << std::endl; 
             ofile_.close();     
         }
 
@@ -121,17 +117,17 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
         
         for (int time_iteration = 1;time_iteration<= time_steps;time_iteration++){
             for (int current_particle_uniq = 0;current_particle_uniq < (particles_).size();current_particle_uniq++){
-                a = total_force_with_interactions(current_particle_uniq)/((particles_)[current_particle_uniq].get_mass());
+                a = total_force_with_interactions(current_particle_uniq,time_iteration*dt)/((particles_)[current_particle_uniq].get_mass());
                 (particles_)[current_particle_uniq].change_velocity((particles_)[current_particle_uniq].get_velocity()+a*dt);
                 (particles_)[current_particle_uniq].change_position(((particles_)[current_particle_uniq].get_position()+((particles_)[current_particle_uniq].get_velocity()*dt)));
                 //filename = "particle_" + std::to_string(current_particle_uniq_1)+ "_with_interactions.txt";             
                 filename = "Euler_Cromer_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_with_interactions.txt";
                 ofile_.open(filename, std::ofstream::app);
-                ofile_<< std::setw(width) << (particles_)[current_particle_uniq].get_position()(0) <<
-                std::setw(width) << (particles_)[current_particle_uniq].get_position()(1) << 
-                std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(0) <<
-                std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(1) << 
-                std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << std::to_string(dt*time_iteration) << std::endl; 
+                ofile_<< std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(0) <<
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(1) << 
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(0) <<
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(1) << 
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << std::setprecision(prec) << std::to_string(dt*time_iteration) << std::endl; 
                 ofile_.close();     
                 }
             }
@@ -147,11 +143,11 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
             //filename = "particle_" + std::to_string(current_particle_uniq) + "_without_interactions.txt";           
             filename = "Euler_Cromer_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_without_interactions.txt";
             ofile_.open(filename);
-            ofile_<< std::setw(width) << (particles_)[current_particle_uniq].get_position()(0) <<
-            std::setw(width) << (particles_)[current_particle_uniq].get_position()(1) << 
-            std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(0) <<
-            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(1) << 
-            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << 0 << std::endl; 
+            ofile_<< std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(0) <<
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(1) << 
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(0) <<
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(1) << 
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << std::setprecision(prec) << 0 << std::endl; 
             ofile_.close();     
         }
 
@@ -163,7 +159,7 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
             for (int current_particle_uniq_1 = 0;current_particle_uniq_1 < (particles_).size();current_particle_uniq_1++){
                 //std::cout << "round 2??" << std::endl;
                 //std::cout << current_particle_uniq_1 << std::endl;
-                a = total_force_without_interactions(current_particle_uniq_1)/((particles_)[current_particle_uniq_1].get_mass());
+                a = total_force_without_interactions(current_particle_uniq_1,time_iteration*dt)/((particles_)[current_particle_uniq_1].get_mass());
                 //std::cout << a << std::endl;
                 //std::cout << "line_212" << std::endl;
                 //std::cout << "velocity_before" << std::endl;
@@ -177,11 +173,11 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
                 //filename = "particle_" + std::to_string(current_particle_uniq_1)+ "_without_interactions.txt";
                 filename = "Euler_Cromer_particle_" + std::to_string(current_particle_uniq_1) + "_n_steps_" + std::to_string(time_steps)+ "_without_interactions.txt";
                 ofile_.open(filename, std::ofstream::app);
-                ofile_<< std::setw(width) << (particles_)[current_particle_uniq_1].get_position()(0) <<
-                std::setw(width) << (particles_)[current_particle_uniq_1].get_position()(1) << 
-                std::setw(width) << (particles_)[current_particle_uniq_1].get_position()(2) << std::setw(width) << (particles_)[current_particle_uniq_1].get_velocity()(0) <<
-                std::setw(width) << (particles_)[current_particle_uniq_1].get_velocity()(1) << 
-                std::setw(width) << (particles_)[current_particle_uniq_1].get_velocity()(2) << std::setw(width) << std::to_string(dt*time_iteration) << std::endl; 
+                ofile_<< std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq_1].get_position()(0) <<
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq_1].get_position()(1) << 
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq_1].get_position()(2) << std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq_1].get_velocity()(0) <<
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq_1].get_velocity()(1) << 
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq_1].get_velocity()(2) << std::setw(width) << std::setprecision(prec) << std::to_string(dt*time_iteration) << std::endl; 
                 ofile_.close();     
                 }
             }
@@ -191,10 +187,11 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
 }
 
 //runge-kutta 4
-void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_interactions){
+void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_interactions,std::string make_files){
     std::cout << "line 173" << std::endl;
     double dt = time/time_steps;
     int width = 40;
+    int prec = 16;
     std::vector<arma::mat> k_all_a;
     std::vector<arma::mat> k_all_v;
     int k_n = 4;
@@ -220,21 +217,21 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
     if (with_or_without_interactions == "yes"){
         std::string filename; 
         std::ofstream ofile_;
-        std::cout << "line 201" << std::endl;
+        if (make_files == "yes"){
         for (int current_particle_uniq = 0; current_particle_uniq < (particles_).size(); current_particle_uniq++){
             //filename = "particle_" + std::to_string(current_particle_uniq) + "_with_interactions_RK4.txt";        
             filename = "RK4_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_with_interactions.txt";
             ofile_.open(filename);
             ofile_<< 
-            std::setw(width) << (particles_)[current_particle_uniq].get_position()(0) <<
-            std::setw(width) << (particles_)[current_particle_uniq].get_position()(1) << 
-            std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << 
-            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(0) <<
-            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(1) << 
-            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << 0 << std::endl; 
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(0) <<
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(1) << 
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(2) << 
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(0) <<
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(1) << 
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << std::setprecision(prec) << 0 << std::endl; 
             ofile_.close();        
             }
-
+        }   
         arma::mat pos = arma::zeros(particles_.size(),3);
         arma::mat vel = arma::zeros(particles_.size(),3);
         arma::mat update_pos;
@@ -243,7 +240,7 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
 
 
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
-                k_all_a[current_particle](0,arma::span::all) = arma::trans(total_force_with_interactions(current_particle)/((particles_)[current_particle].get_mass()));
+                k_all_a[current_particle](0,arma::span::all) = arma::trans(total_force_with_interactions(current_particle,time_iteration*dt)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](0,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
@@ -253,7 +250,7 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
                 particles_[current_particle].change_position(particles_[current_particle].get_position()+arma::trans(dt/2*k_all_v[current_particle](0,arma::span::all)));
             }
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
-                k_all_a[current_particle](1,arma::span::all) = arma::trans(total_force_with_interactions(current_particle)/((particles_)[current_particle].get_mass()));
+                k_all_a[current_particle](1,arma::span::all) = arma::trans(total_force_with_interactions(current_particle,time_iteration*dt)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](1,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
             //changes back the positions and the velocities
@@ -266,7 +263,7 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
                 particles_[current_particle].change_position(particles_[current_particle].get_position()+arma::trans(dt/2*k_all_v[current_particle](1,arma::span::all)));        
                 }
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
-                k_all_a[current_particle](2,arma::span::all) = arma::trans(total_force_with_interactions(current_particle)/((particles_)[current_particle].get_mass()));
+                k_all_a[current_particle](2,arma::span::all) = arma::trans(total_force_with_interactions(current_particle,time_iteration*dt)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](2,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
             //changes back the positions and the velocities
@@ -279,7 +276,7 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
                 particles_[current_particle].change_position(particles_[current_particle].get_position()+arma::trans(dt*k_all_v[current_particle](2,arma::span::all)));        
                 }
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
-                k_all_a[current_particle](3,arma::span::all) = arma::trans(total_force_with_interactions(current_particle)/((particles_)[current_particle].get_mass()));
+                k_all_a[current_particle](3,arma::span::all) = arma::trans(total_force_with_interactions(current_particle,time_iteration*dt)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](3,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
             //changes back the positions and the velocities
@@ -298,14 +295,16 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
                 particles_[current_particle].change_velocity(arma::trans(update_vel));
                 particles_[current_particle].change_position(arma::trans(update_pos));        
                 //filename = "particle_" + std::to_string(current_particle) + "_with_interactions_RK4.txt";           
+                if (make_files == "yes"){
                 filename = "RK4_particle_" + std::to_string(current_particle) + "_n_steps_" + std::to_string(time_steps)+ "_with_interactions.txt";
                 ofile_.open(filename, std::ofstream::app);
-                ofile_<< std::setw(width) << (particles_)[current_particle].get_position()(0) <<
-                std::setw(width) << (particles_)[current_particle].get_position()(1) << 
-                std::setw(width) << (particles_)[current_particle].get_position()(2) << std::setw(width) << (particles_)[current_particle].get_velocity()(0) <<
-                std::setw(width) << (particles_)[current_particle].get_velocity()(1) << 
-                std::setw(width) << (particles_)[current_particle].get_velocity()(2) << std::setw(width) << std::to_string(dt*time_iteration) << std::endl; 
-                ofile_.close();       
+                ofile_<< std::setw(width) << std::setprecision(prec) << (particles_)[current_particle].get_position()(0) <<
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle].get_position()(1) << 
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle].get_position()(2) << std::setw(width) << std::setprecision(prec) << (particles_)[current_particle].get_velocity()(0) <<
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle].get_velocity()(1) << 
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle].get_velocity()(2) << std::setw(width) << std::setprecision(prec) << std::to_string(dt*time_iteration) << std::endl; 
+                ofile_.close();
+                }       
                 }
     
             }
@@ -314,17 +313,19 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
     else{
         std::string filename; 
         std::ofstream ofile_;
+        if (make_files == "yes"){
         for (int current_particle_uniq = 0; current_particle_uniq < (particles_).size(); current_particle_uniq++){
             //filename = "particle_" + std::to_string(current_particle_uniq) + "_without_interactions_RK4.txt";        
             filename = "RK4_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_without_interactions.txt";
             ofile_.open(filename);
-            ofile_<< std::setw(width) << (particles_)[current_particle_uniq].get_position()(0) <<
-            std::setw(width) << (particles_)[current_particle_uniq].get_position()(1) << 
-            std::setw(width) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(0) <<
-            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(1) << 
-            std::setw(width) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << 0 << std::endl; 
+            ofile_<< std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(0) <<
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(1) << 
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(2) << std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(0) <<
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(1) << 
+            std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_velocity()(2) << std::setw(width) << std::setprecision(prec) << 0 << std::endl; 
             ofile_.close();         
             }
+        }
 
         arma::mat pos = arma::zeros(particles_.size(),3);
         arma::mat vel = arma::zeros(particles_.size(),3);
@@ -335,7 +336,7 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
 
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
                 std::cout << "inside loop" << std::endl;
-                k_all_a[current_particle](0,arma::span::all) = arma::trans(total_force_without_interactions(current_particle)/((particles_)[current_particle].get_mass()));
+                k_all_a[current_particle](0,arma::span::all) = arma::trans(total_force_without_interactions(current_particle,time_iteration*dt)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](0,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
@@ -345,7 +346,7 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
                 particles_[current_particle].change_position(particles_[current_particle].get_position()+arma::trans(dt/2*k_all_v[current_particle](0,arma::span::all)));
             }
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
-                k_all_a[current_particle](1,arma::span::all) = arma::trans(total_force_without_interactions(current_particle)/((particles_)[current_particle].get_mass()));
+                k_all_a[current_particle](1,arma::span::all) = arma::trans(total_force_without_interactions(current_particle,time_iteration*dt)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](1,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
             //changes back the positions and the velocities
@@ -358,7 +359,7 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
                 particles_[current_particle].change_position(particles_[current_particle].get_position()+arma::trans(dt/2*k_all_v[current_particle](1,arma::span::all)));        
                 }
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
-                k_all_a[current_particle](2,arma::span::all) = arma::trans(total_force_without_interactions(current_particle)/((particles_)[current_particle].get_mass()));
+                k_all_a[current_particle](2,arma::span::all) = arma::trans(total_force_without_interactions(current_particle,time_iteration*dt)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](2,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
             //changes back the positions and the velocities
@@ -371,7 +372,7 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
                 particles_[current_particle].change_position(particles_[current_particle].get_position()+arma::trans(dt*k_all_v[current_particle](2,arma::span::all)));        
                 }
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
-                k_all_a[current_particle](3,arma::span::all) = arma::trans(total_force_without_interactions(current_particle)/((particles_)[current_particle].get_mass()));
+                k_all_a[current_particle](3,arma::span::all) = arma::trans(total_force_without_interactions(current_particle,time_iteration*dt)/((particles_)[current_particle].get_mass()));
                 k_all_v[current_particle](3,arma::span::all) = arma::trans(particles_[current_particle].get_velocity());
                 }
             //changes back the positions and the velocities
@@ -390,17 +391,50 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
                 particles_[current_particle].change_velocity(arma::trans(update_vel));
                 particles_[current_particle].change_position(arma::trans(update_pos));        
                 //filename = "particle_" + std::to_string(current_particle) + "_without_interactions_RK4.txt";           
+                if (make_files == "yes"){
                 filename = "RK4_particle_" + std::to_string(current_particle) + "_n_steps_" + std::to_string(time_steps)+ "_without_interactions.txt";
                 ofile_.open(filename, std::ofstream::app);
-                ofile_<< std::setw(width) << (particles_)[current_particle].get_position()(0) <<
-                std::setw(width) << (particles_)[current_particle].get_position()(1) << 
-                std::setw(width) << (particles_)[current_particle].get_position()(2) << std::setw(width) << (particles_)[current_particle].get_velocity()(0) <<
-                std::setw(width) << (particles_)[current_particle].get_velocity()(1) << 
-                std::setw(width) << (particles_)[current_particle].get_velocity()(2) << std::setw(width) << std::to_string(dt*time_iteration) << std::endl; 
+                ofile_<< std::setw(width) << std::setprecision(prec) << (particles_)[current_particle].get_position()(0) <<
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle].get_position()(1) << 
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle].get_position()(2) << std::setw(width) << std::setprecision(prec) << (particles_)[current_particle].get_velocity()(0) <<
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle].get_velocity()(1) << 
+                std::setw(width) << std::setprecision(prec) << (particles_)[current_particle].get_velocity()(2) << std::setw(width) << std::setprecision(prec) << std::to_string(dt*time_iteration) << std::endl; 
                 ofile_.close();         
                 }
+                }   
     
             }
         }
     
 }
+
+
+//void PenningTrap::task9(arma::vec f,arma::vec omega_V,double time,int time_steps,std::string with_or_without_interactions,std::string make_files){
+//    f_ = f;
+//    omega_V_ = omega_V;
+//    int number_of_particles_inside_trap;
+//    std::ofstream ofile;
+//    std::string filename;
+//
+//    //add_particle(random...);
+//    //save all initial values in a big list using foor loop
+//    for (int amplitude = 0;amplitude < f_.size();amplitude++){
+//            f_value_ = amplitude;
+//            number_of_particles_inside_trap =0;
+//        for (int omega = 0;omega<omega_V_.size();omega++){
+//            omega_V_value_ = omega;
+//            
+//            RK4(time,time_steps,with_or_without_interactions,make_files);
+//            //after 500 micro seconds
+//            //check for each particle if |r|<=d; if so; number_of_particles_inside_trap += 1
+//            //for loop to change initial values of all particles back to original
+//            //filename = std::to_string(omega) +".txt"
+//            //ofile.open(filename, std::ofstream::app);
+//            //for each amplitude: write to file  omega number_of_particles_inside_trap
+//            //ofile.close()
+//            
+//
+//        }
+//
+//    }
+//}

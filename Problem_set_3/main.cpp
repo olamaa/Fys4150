@@ -50,7 +50,7 @@ int main()
 
    //std::vector<int> = {4000,}
    for (int i=2;i<6;i++){
-    test_trap.RK4(time,1000*pow(2,i),"yes");
+    test_trap.RK4(time,1000*pow(2,i),"yes","yes");
     test_trap.remove_all_particles();
     test_particle_1.change_position(initial_position1);
     test_particle_1.change_velocity(initial_velocity1);
@@ -59,7 +59,7 @@ int main()
     test_trap.add_particle(test_particle_1);
     test_trap.add_particle(test_particle_2);
     
-    test_trap.RK4(time,1000*pow(2,i),"no");
+    test_trap.RK4(time,1000*pow(2,i),"no","yes");
     test_trap.remove_all_particles();
     test_particle_1.change_position(initial_position1);
     test_particle_1.change_velocity(initial_velocity1);

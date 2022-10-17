@@ -13,6 +13,10 @@ public:
   double B0_,V0_, d_;
   double prefactor_e_field_;
   arma::vec r;
+  arma::vec f_;
+  double f_value_;
+  double omega_V_value_;
+  arma::vec omega_V_;
   arma::vec sum;
   arma::vec coordinate_dependent_vector;
   arma::vec b_field_unit_vector_;
@@ -55,7 +59,9 @@ public:
   void remove_all_particles();
 //
   //External electric field at point r=(x,y,z)
-  arma::vec external_E_field_on_current_particle(int current_particle);
+  arma::vec external_E_field_on_current_particle(int current_particle,double time);
+
+  //arma::vec external_E_field_on_current_particle_time_dependant(int current_particle,double time);
 
 //
   //// External magnetic field at point r=(x,y,z)
@@ -71,9 +77,9 @@ public:
   //arma::vec total_force_particles(int i);
 //
   //// The total force on particle_i from both external fields and other particles
-  arma::vec total_force_with_interactions(int current_particle);
+  arma::vec total_force_with_interactions(int current_particle,double time);
 
-  arma::vec total_force_without_interactions(int current_particle);
+  arma::vec total_force_without_interactions(int current_particle,double time);
 //
   //// Evolve the system one time step (dt) using Runge-Kutta 4th order
   //void evolve_RK4(double dt);
@@ -81,7 +87,9 @@ public:
   //// Evolve the system one time step (dt) using Forward Euler
   void forward_Euler(double time,int time_steps,std::string with_or_without_interactions);
 
-  void RK4(double time,int time_steps,std::string with_or_without_interactions);
+  void RK4(double time,int time_steps,std::string with_or_without_interactions,std::string make_files);
+
+  void task9(arma::vec f,arma::vec omega_V,double time,int time_steps,std::string with_or_without_interactions,std::string make_files);
 };
 
 #endif
