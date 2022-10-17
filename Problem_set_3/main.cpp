@@ -80,6 +80,21 @@ int main()
    
    }
    //test_trap.RK4(time,4000,"yes"); //"yes" for interactions
+   //test_trap.remove_all_particles();
+   //arma::vec rand_pos;
+   //arma::vec rand_vel;
+   //Particle particle_x1 = Particle(q,mass_Ca_II,rand_pos,rand_vel);
+   ////std::vector<Particle> all_particles;
+   //for (int i = 0;i<100;i++){
+   //   //all_particles.push_back();
+   //   arma::arma_rng::set_seed_random();
+   //   rand_pos.randn(3)*0.1*d;
+   //   rand_vel.randn(3)*0.1*d;
+   //   Particle all_particle_strings(i) = Particle(q,mass_Ca_II,rand_pos,rand_vel);
+   //   add_particle(all_particle_strings(i))
+   //}
+   //task9
+
 
    return 0;
 

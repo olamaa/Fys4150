@@ -414,16 +414,25 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
 //    int number_of_particles_inside_trap;
 //    std::ofstream ofile;
 //    std::string filename;
+//    arma::vec rand_pos;
+//    arma::vec rand_vel;
+//    Particle 
+//    //for ()
+//    //arma::arma_rng::set_seed_random();
+//    //rand_pos.randn(3)*0.1*d_;
+//    //rand_vel.randn(3)*0.1*d_;
+//    //Particle particle1 = Particle
+//    //add_particle(Particle(charge,mass,rand_pos,rand_vel);)
 //
 //    //add_particle(random...);
 //    //save all initial values in a big list using foor loop
-//    for (int amplitude = 0;amplitude < f_.size();amplitude++){
-//            f_value_ = amplitude;
-//            number_of_particles_inside_trap =0;
-//        for (int omega = 0;omega<omega_V_.size();omega++){
-//            omega_V_value_ = omega;
-//            
-//            RK4(time,time_steps,with_or_without_interactions,make_files);
+//    //for (int amplitude = 0;amplitude < f_.size();amplitude++){
+//    //        f_value_ = amplitude;
+//    //        number_of_particles_inside_trap =0;
+//    //    for (int omega = 0;omega<omega_V_.size();omega++){
+//    //        omega_V_value_ = omega;
+//    //        
+//    //        RK4(time,time_steps,with_or_without_interactions,make_files);
 //            //after 500 micro seconds
 //            //check for each particle if |r|<=d; if so; number_of_particles_inside_trap += 1
 //            //for loop to change initial values of all particles back to original
@@ -433,7 +442,8 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
 //            //ofile.close()
 //            
 //
-//        }
+//        //}
 //
-//    }
+//    //}
 //}
+//
