@@ -54,7 +54,7 @@ public:
   PenningTrap(double B0, double V0, double d);
 
   //// Add a particle to the trap
-  void add_particle(Particle& new_particle);
+  void add_particle(Particle new_particle);
   
   void remove_all_particles();
 //
@@ -65,7 +65,7 @@ public:
 
 //
   //// External magnetic field at point r=(x,y,z)
-  arma::vec external_B_field_on_current_particle();  
+  arma::vec external_B_field_on_current_particle(int current_particle);  
 //
   //// Force on particle_i from particle_j
   arma::vec internal_E_field_on_current_particle(int current_particle);//,std::vector<Particle>& copy_of_particles);
@@ -89,7 +89,7 @@ public:
 
   void RK4(double time,int time_steps,std::string with_or_without_interactions,std::string make_files);
 
-  void task9(arma::vec f,arma::vec omega_V,double time,int time_steps,std::string with_or_without_interactions,std::string make_files);
+  void task9(arma::vec f,arma::vec omega_V,double time,int time_steps,std::string with_or_without_interactions);
 };
 
 #endif

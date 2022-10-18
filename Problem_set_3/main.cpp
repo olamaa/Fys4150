@@ -46,55 +46,45 @@ int main()
     
    int time = 50;
 
-   //std::vector<int> = {4000,}
-   for (int i=2;i<6;i++){
-    test_trap.RK4(time,1000*pow(2,i),"yes","yes");
-    test_trap.remove_all_particles();
-    test_particle_1.change_position(initial_position1);
-    test_particle_1.change_velocity(initial_velocity1);
-    test_particle_2.change_position(initial_position2);
-    test_particle_2.change_velocity(initial_velocity2);
-    test_trap.add_particle(test_particle_1);
-    test_trap.add_particle(test_particle_2);
-    
-    test_trap.RK4(time,1000*pow(2,i),"no","yes");
-    test_trap.remove_all_particles();
-    test_particle_1.change_position(initial_position1);
-    test_particle_1.change_velocity(initial_velocity1);
-    test_particle_2.change_position(initial_position2);
-    test_particle_2.change_velocity(initial_velocity2);
-    test_trap.add_particle(test_particle_1);
-    test_trap.add_particle(test_particle_2);
-    
-    test_trap.forward_Euler(time,1000*pow(2,i),"yes");
-    test_trap.remove_all_particles();
-    test_particle_1.change_position(initial_position1);
-    test_particle_1.change_velocity(initial_velocity1);
-    test_particle_2.change_position(initial_position2);
-    test_particle_2.change_velocity(initial_velocity2);
-    test_trap.add_particle(test_particle_1);
-    test_trap.add_particle(test_particle_2);
-
-    test_trap.forward_Euler(time,1000*pow(2,i),"no");
-    
-   
-   }
-   //test_trap.RK4(time,4000,"yes"); //"yes" for interactions
-   //test_trap.remove_all_particles();
-   //arma::vec rand_pos;
-   //arma::vec rand_vel;
-   //Particle particle_x1 = Particle(q,mass_Ca_II,rand_pos,rand_vel);
-   ////std::vector<Particle> all_particles;
-   //for (int i = 0;i<100;i++){
-   //   //all_particles.push_back();
-   //   arma::arma_rng::set_seed_random();
-   //   rand_pos.randn(3)*0.1*d;
-   //   rand_vel.randn(3)*0.1*d;
-   //   Particle all_particle_strings(i) = Particle(q,mass_Ca_II,rand_pos,rand_vel);
-   //   add_particle(all_particle_strings(i))
-   //}
+//   for (int i=2;i<6;i++){
+//    test_trap.RK4(time,1000*pow(2,i),"yes","yes");
+//    test_trap.remove_all_particles();
+//
+//    test_trap.add_particle(test_particle_1);
+//    test_trap.add_particle(test_particle_2);
+//    
+//    test_trap.RK4(time,1000*pow(2,i),"no","yes");
+//    test_trap.remove_all_particles();
+//
+//    test_trap.add_particle(test_particle_1);
+//    test_trap.add_particle(test_particle_2);
+//    
+//    test_trap.forward_Euler(time,1000*pow(2,i),"yes");
+//    test_trap.remove_all_particles();
+//   
+//    test_trap.add_particle(test_particle_1);
+//    test_trap.add_particle(test_particle_2);
+//
+//    test_trap.forward_Euler(time,1000*pow(2,i),"no");
+//    
+//   
+//   }
    //task9
-
+   test_trap.remove_all_particles();
+   arma::vec rand_pos;
+   arma::vec rand_vel;
+   //Particle particle_x = Particle(q,mass_Ca_II,rand_pos,rand_vel);
+   //std::vector<Particle> all_particles;
+   for (int i = 0;i<100;i++){
+      //all_particles.push_back();
+      arma::arma_rng::set_seed_random();
+      rand_pos.randn(3)*0.1*d;
+      rand_vel.randn(3)*0.1*d;
+      Particle particle_x = Particle(q,mass_Ca_II,rand_pos,rand_vel);
+      test_trap.add_particle(particle_x);
+   }
+   
+   test_trap.task9({0.1,0.4,0.7},arma::linspace(0.2,2.5,(2.5-0.2)/0.02),500,40000,"without interactions");
 
    return 0;
 

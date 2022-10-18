@@ -25,7 +25,7 @@ PenningTrap::PenningTrap(double B0, double V0, double d)
 }
 
 // Add a particle to the trap
-void PenningTrap::add_particle(Particle& new_particle){
+void PenningTrap::add_particle(Particle new_particle){
     
     particles_.push_back(new_particle);
 }
@@ -43,25 +43,31 @@ arma::vec PenningTrap::external_E_field_on_current_particle(int current_particle
     if (f_.size() == 0){
     //r = particles_[current_particle].get_position();
     //coordinate_dependent_vector = {r(0),r(1),-2*r(2)};
-    return prefactor_e_field_*coordinate_dependent_vector;
+        return prefactor_e_field_*coordinate_dependent_vector;
     }
     
     else{
         if (arma::norm(r,2) > d_){
             return {0,0,0};
-            }
+        }
         else{
             return prefactor_e_field_*(1+f_value_*cos(omega_V_value_*time))*coordinate_dependent_vector;
-            }
-        
         }
+        
+    }
 }
 
 
-arma::vec PenningTrap::external_B_field_on_current_particle(){
-    return b_field_unit_vector_*B0_;
-}
-  
+arma::vec PenningTrap::external_B_field_on_current_particle(int current_particle){
+    r = particles_[current_particle].get_position();
+    
+    if (arma::norm(r,2) > d_){
+            return {0,0,0};
+        }
+    else{
+        return b_field_unit_vector_*B0_;
+        }
+}  
 
 arma::vec PenningTrap::internal_E_field_on_current_particle(int current_particle){
 
@@ -83,12 +89,12 @@ arma::vec PenningTrap::internal_E_field_on_current_particle(int current_particle
 
 arma::vec PenningTrap::total_force_with_interactions(int current_particle, double time){
 return (particles_)[current_particle].get_charge()*(external_E_field_on_current_particle(current_particle,time) + internal_E_field_on_current_particle(current_particle))
-    + arma::cross((particles_)[current_particle].get_charge()*(particles_)[current_particle].get_velocity(),external_B_field_on_current_particle());
+    + arma::cross((particles_)[current_particle].get_charge()*(particles_)[current_particle].get_velocity(),external_B_field_on_current_particle(current_particle));
 }
 
 arma::vec PenningTrap::total_force_without_interactions(int current_particle,double time){
 return (particles_)[current_particle].get_charge()*(external_E_field_on_current_particle(current_particle,time))
-    + arma::cross((particles_)[current_particle].get_charge()*(particles_)[current_particle].get_velocity(),external_B_field_on_current_particle());
+    + arma::cross((particles_)[current_particle].get_charge()*(particles_)[current_particle].get_velocity(),external_B_field_on_current_particle(current_particle));
 }
 
 //euler-cromer
@@ -408,42 +414,49 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
 }
 
 
-//void PenningTrap::task9(arma::vec f,arma::vec omega_V,double time,int time_steps,std::string with_or_without_interactions,std::string make_files){
-//    f_ = f;
-//    omega_V_ = omega_V;
-//    int number_of_particles_inside_trap;
-//    std::ofstream ofile;
-//    std::string filename;
-//    arma::vec rand_pos;
-//    arma::vec rand_vel;
-//    Particle 
-//    //for ()
-//    //arma::arma_rng::set_seed_random();
-//    //rand_pos.randn(3)*0.1*d_;
-//    //rand_vel.randn(3)*0.1*d_;
-//    //Particle particle1 = Particle
-//    //add_particle(Particle(charge,mass,rand_pos,rand_vel);)
-//
-//    //add_particle(random...);
-//    //save all initial values in a big list using foor loop
-//    //for (int amplitude = 0;amplitude < f_.size();amplitude++){
-//    //        f_value_ = amplitude;
-//    //        number_of_particles_inside_trap =0;
-//    //    for (int omega = 0;omega<omega_V_.size();omega++){
-//    //        omega_V_value_ = omega;
-//    //        
-//    //        RK4(time,time_steps,with_or_without_interactions,make_files);
-//            //after 500 micro seconds
-//            //check for each particle if |r|<=d; if so; number_of_particles_inside_trap += 1
-//            //for loop to change initial values of all particles back to original
-//            //filename = std::to_string(omega) +".txt"
-//            //ofile.open(filename, std::ofstream::app);
-//            //for each amplitude: write to file  omega number_of_particles_inside_trap
-//            //ofile.close()
-//            
-//
-//        //}
-//
-//    //}
-//}
-//
+void PenningTrap::task9(arma::vec f,arma::vec omega_V,double time,int time_steps,std::string with_or_without_interactions){
+    f_ = f;
+    omega_V_ = omega_V;
+    int number_of_particles_inside_trap;
+    std::ofstream ofile;
+    std::string filename;
+    int width = 40;
+    
+    for (int amplitude = 0;amplitude < f_.size();amplitude++){
+            f_value_ = f_(amplitude);
+            std::cout <<  "first loop" << std::endl;
+            filename = std::to_string(f_value_) + ".txt";
+            ofile.open(filename);
+            ofile.close();
+            ofile.open(filename, std::ofstream::app);
+            
+        for (int omega = 0;omega<omega_V_.size();omega++){
+            number_of_particles_inside_trap = 0;
+            omega_V_value_ = omega_V_(omega);
+            std::cout << omega_V_value_  << std::endl;
+            RK4(time,time_steps,with_or_without_interactions,"don't make all the files");
+            
+            for (int i = 0;i<particles_.size();i++){
+                if (arma::norm(particles_[i].get_position(),2) <=d_){
+                    number_of_particles_inside_trap += 1;
+                    }
+                else{}
+            }
+
+            //for loop to change initial values of all particles back to original
+            //filename = std::to_string(f_value_) + ".txt";
+            //ofile.open(filename);
+            //ofile << std::endl;
+            //ofile.close();
+            //ofile.open(filename, std::ofstream::app);
+            //for each amplitude: write to file  omega number_of_particles_inside_trap
+            ofile << std::setw(40)<< omega_V_value_ << std::setw(40) << number_of_particles_inside_trap << std::endl;
+            //ofile.close();
+        }
+        ofile.close();
+            
+
+        //}
+
+    }
+}

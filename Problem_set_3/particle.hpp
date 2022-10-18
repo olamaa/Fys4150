@@ -26,7 +26,7 @@ public:
    //arma::vec velocity_to_be_referenced;
    //arma::vec& velocity_ = velocity_to_be_referenced;
 
-   Particle(double charge,double mass, arma::vec& position,arma::vec& velocity);
+   Particle(double charge,double mass, arma::vec position,arma::vec velocity);
 
    double get_mass();
 

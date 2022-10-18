@@ -1,6 +1,6 @@
 #include <particle.hpp>
 
-Particle::Particle(double charge,double mass, arma::vec& position,arma::vec& velocity)
+Particle::Particle(double charge,double mass, arma::vec position,arma::vec velocity)
 {
 
 
