@@ -69,22 +69,9 @@ int main()
 //    
 //   
 //   }
-   //task9
-   test_trap.remove_all_particles();
-   arma::vec rand_pos;
-   arma::vec rand_vel;
-   //Particle particle_x = Particle(q,mass_Ca_II,rand_pos,rand_vel);
-   //std::vector<Particle> all_particles;
-   for (int i = 0;i<100;i++){
-      //all_particles.push_back();
-      arma::arma_rng::set_seed_random();
-      rand_pos.randn(3)*0.1*d;
-      rand_vel.randn(3)*0.1*d;
-      Particle particle_x = Particle(q,mass_Ca_II,rand_pos,rand_vel);
-      test_trap.add_particle(particle_x);
-   }
-   
-   test_trap.task9({0.1,0.4,0.7},arma::linspace(0.2,2.5,(2.5-0.2)/0.02),500,40000,"without interactions");
+
+   test_trap.task9(d,q,mass_Ca_II,{0.1,0.4,0.7},arma::linspace(0.2,2.5,(2.5-0.2)/0.02),500,40000,"no");
+
 
    return 0;
 

@@ -89,7 +89,7 @@ public:
 
   void RK4(double time,int time_steps,std::string with_or_without_interactions,std::string make_files);
 
-  void task9(arma::vec f,arma::vec omega_V,double time,int time_steps,std::string with_or_without_interactions);
+  void task9(double d,int charge, double mass,arma::vec f,arma::vec omega_V,double time,int time_steps,std::string with_or_without_interactions);
 };
 
 #endif

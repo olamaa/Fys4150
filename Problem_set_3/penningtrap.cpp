@@ -414,13 +414,15 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
 }
 
 
-void PenningTrap::task9(arma::vec f,arma::vec omega_V,double time,int time_steps,std::string with_or_without_interactions){
+void PenningTrap::task9(double d,int charge, double mass, arma::vec f,arma::vec omega_V,double time,int time_steps,std::string with_or_without_interactions){
     f_ = f;
     omega_V_ = omega_V;
     int number_of_particles_inside_trap;
     std::ofstream ofile;
     std::string filename;
     int width = 40;
+    arma::vec rand_pos;
+    arma::vec rand_vel;
     
     for (int amplitude = 0;amplitude < f_.size();amplitude++){
             f_value_ = f_(amplitude);
@@ -431,6 +433,24 @@ void PenningTrap::task9(arma::vec f,arma::vec omega_V,double time,int time_steps
             ofile.open(filename, std::ofstream::app);
             
         for (int omega = 0;omega<omega_V_.size();omega++){
+            remove_all_particles();
+            
+            //Particle particle_x = Particle(q,mass_Ca_II,rand_pos,rand_vel);
+            //std::vector<Particle> all_particles;
+            for (int i = 0;i<100;i++){
+                //std::cout <<  "441" << std::endl;
+               //all_particles.push_back();
+               arma::arma_rng::set_seed_random();
+               //std::cout <<  "444" << std::endl;
+               rand_pos.randn(3)*0.1*d;
+               //std::cout <<  "446" << std::endl;
+               rand_vel.randn(3)*0.1*d;
+               //std::cout <<  "448" << std::endl;
+               Particle particle_x = Particle(charge,mass,rand_pos,rand_vel);
+               //std::cout <<  "450" << std::endl;
+               add_particle(particle_x);
+               //std::cout <<  "452" << std::endl;
+            }
             number_of_particles_inside_trap = 0;
             omega_V_value_ = omega_V_(omega);
             std::cout << omega_V_value_  << std::endl;
@@ -451,7 +471,6 @@ void PenningTrap::task9(arma::vec f,arma::vec omega_V,double time,int time_steps
             //ofile.open(filename, std::ofstream::app);
             //for each amplitude: write to file  omega number_of_particles_inside_trap
             ofile << std::setw(40)<< omega_V_value_ << std::setw(40) << number_of_particles_inside_trap << std::endl;
-            //ofile.close();
         }
         ofile.close();
             
