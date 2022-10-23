@@ -2,7 +2,7 @@
 #include<armadillo>
 #include<iostream>
 #include<vector>
-#include<penningtrap.hpp>
+#include<penningtrap_beehive.hpp>
 #include<cmath>
 
 
@@ -37,45 +37,47 @@ int main()
    arma::vec velocity1 = {0.,25.,0.};
    arma::vec position2 = {25.,25.,0.};
    arma::vec velocity2 ={0.,40.,5.};
-   Particle test_particle_1 = Particle(q,mass_Ca_II,position1,velocity1);
-   Particle test_particle_2 = Particle(q,mass_Ca_II,position2,velocity2);
+   //Particle test_particle_1 = Particle(q,mass_Ca_II,position1,velocity1);
+   //Particle test_particle_2 = Particle(q,mass_Ca_II,position2,velocity2);
    PenningTrap test_trap = PenningTrap(B0,V0,d);
-   test_trap.add_particle(test_particle_1);
-   test_trap.add_particle(test_particle_2);
+   //test_trap.add_particle(test_particle_1);
+   //test_trap.add_particle(test_particle_2);
 
     
-   int time = 50;
+   //int time = 50;
 
-   for (int i=2;i<6;i++){
-    test_trap.RK4(time,1000*pow(2,i),"yes","yes");
-    test_trap.remove_all_particles();
+//   for (int i=2;i<6;i++){
+//    test_trap.RK4(time,1000*pow(2,i),"yes","yes");
+//    test_trap.remove_all_particles();
+//
+//    test_trap.add_particle(test_particle_1);
+//    test_trap.add_particle(test_particle_2);
+//    
+//    test_trap.RK4(time,1000*pow(2,i),"no","yes");
+//    test_trap.remove_all_particles();
+//
+//    test_trap.add_particle(test_particle_1);
+//    test_trap.add_particle(test_particle_2);
+//    
+//    test_trap.forward_Euler(time,1000*pow(2,i),"yes");
+//    test_trap.remove_all_particles();
+//   
+//    test_trap.add_particle(test_particle_1);
+//    test_trap.add_particle(test_particle_2);
+//
+//    test_trap.forward_Euler(time,1000*pow(2,i),"no");
+//    
+//   
+//   }
 
-    test_trap.add_particle(test_particle_1);
-    test_trap.add_particle(test_particle_2);
-    
-    test_trap.RK4(time,1000*pow(2,i),"no","yes");
-    test_trap.remove_all_particles();
-
-    test_trap.add_particle(test_particle_1);
-    test_trap.add_particle(test_particle_2);
-    
-    test_trap.forward_Euler(time,1000*pow(2,i),"yes");
-    test_trap.remove_all_particles();
-   
-    test_trap.add_particle(test_particle_1);
-    test_trap.add_particle(test_particle_2);
-
-    test_trap.forward_Euler(time,1000*pow(2,i),"no");
-    
-   
-   }
-
-    //task 9
-    test_trap.task9(d,q,mass_Ca_II,{0.1,0.4,0.7},500,40000,"with",arma::linspace(1,2,1/0.02),arma::linspace(0.2,2,(1.6-1.2)/0.04),arma::linspace(1.1,1.7,(1.7-1.1)/0.06));
    //test_trap.task9(d,q,mass_Ca_II,{0.1,0.4,0.7},arma::linspace(0.8,2,(2-0.8)/0.002),500,40000,"without");
    //test_trap.task9(d,q,mass_Ca_II,{0.1,0.4,0.7},500,40000,"with",arma::linspace(1,2,1/0.02),arma::linspace(0.2,2,(1.6-1.2)/0.04),arma::linspace(1.1,1.7,(1.7-1.1)/0.06));
-   //test_trap.task9(d,q,mass_Ca_II,{0.1,0.4,0.7},500,40000,"with",arma::linspace(1,2,1/0.005),arma::linspace(0.8,2,(2-0.8)/0.006),arma::linspace(0.8,2.5,(2.5-0.8)/0.0085));
+   test_trap.task9(d,q,mass_Ca_II,0.1,500,40000,"with",arma::linspace(1,2,1./0.005));
 
+
+
+    //test_trap.task9(d,q,mass_Ca_II,0.4,500,40000,"with",arma::linspace(0.8,2.,(2.-0.8)/0.006));
+    //test_trap.task9(d,q,mass_Ca_II,0.7,500,40000,"with",arma::linspace(0.8,2.5,(2.5-0.8)/0.0085));
    return 0;
 
 }

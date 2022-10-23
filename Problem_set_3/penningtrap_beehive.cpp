@@ -1,4 +1,4 @@
-#include<penningtrap.hpp>
+#include<penningtrap_beehive.hpp>
 #include<iostream>
 #include<particle.hpp>
 #include<vector>
@@ -40,13 +40,13 @@ void PenningTrap::remove_all_particles(){
 arma::vec PenningTrap::external_E_field_on_current_particle(int current_particle,double time){
     r = particles_[current_particle].get_position();
     coordinate_dependent_vector = {r(0),r(1),-2*r(2)};
-    if (f_.size() == 0){
+    //if (f_.size() == 0){
     //r = particles_[current_particle].get_position();
     //coordinate_dependent_vector = {r(0),r(1),-2*r(2)};
-        return prefactor_e_field_*coordinate_dependent_vector;
-    }
+      //  return prefactor_e_field_*coordinate_dependent_vector;
     
-    else{
+    
+    //else{
         if (arma::norm(r,2) > d_){
             return {0,0,0};
         }
@@ -55,7 +55,7 @@ arma::vec PenningTrap::external_E_field_on_current_particle(int current_particle
         }
         
     }
-}
+
 
 
 arma::vec PenningTrap::external_B_field_on_current_particle(int current_particle){
@@ -414,7 +414,7 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
 }
 
 
-void PenningTrap::task9(double d,int charge, double mass, arma::vec f,double time,int time_steps,std::string with_or_without_interactions,arma::vec w1,arma::vec w2,arma::vec w3){
+void PenningTrap::task9(double d,int charge, double mass, double f,double time,int time_steps,std::string with_or_without_interactions,arma::vec w1){
     f_ = f;
     //omega_V_ = omega_V;
     int number_of_particles_inside_trap;
@@ -423,19 +423,18 @@ void PenningTrap::task9(double d,int charge, double mass, arma::vec f,double tim
     int width = 40;
     arma::vec rand_pos;
     arma::vec rand_vel;
-    std::vector<arma::vec> widths;
-    widths.push_back(w1);
-    widths.push_back(w2);
-    widths.push_back(w3);
+    arma::vec widths = w1;
+    //widths.push_back(w2);
+    //widths.push_back(w3);
     
-    for (int amplitude = 0;amplitude < f_.size();amplitude++){
-            f_value_ = f_(amplitude);
+    //for (int amplitude = 0;amplitude < f_.size();amplitude++){
+            f_value_ = f_;
             std::cout <<  "first loop" << std::endl;
-            filename = std::to_string(f_value_)+"_"+with_or_without_interactions + "_test.txt";
+            filename = std::to_string(f_value_)+"_"+with_or_without_interactions + ".txt";
             ofile.open(filename);
             ofile.close();
             ofile.open(filename, std::ofstream::app);
-            omega_V_ = widths[amplitude];
+            omega_V_ = widths;
         for (int omega = 0;omega<omega_V_.size();omega++){
             remove_all_particles();
             
@@ -458,12 +457,9 @@ void PenningTrap::task9(double d,int charge, double mass, arma::vec f,double tim
             number_of_particles_inside_trap = 0;
             omega_V_value_ = omega_V_(omega);
             std::cout << omega_V_value_  << std::endl;
-            if (with_or_without_interactions=="with"){
             RK4(time,time_steps,"yes","don't make all the files");
-            }
-            else{
-                RK4(time,time_steps,"no","don't make all the files");
-            }
+            
+            
             for (int i = 0;i<particles_.size();i++){
                 if (arma::norm(particles_[i].get_position(),2) <=d_){
                     number_of_particles_inside_trap += 1;
@@ -485,5 +481,5 @@ void PenningTrap::task9(double d,int charge, double mass, arma::vec f,double tim
 
         //}
 
-    }
+    //}
 }

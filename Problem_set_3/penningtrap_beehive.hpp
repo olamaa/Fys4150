@@ -13,7 +13,7 @@ public:
   double B0_,V0_, d_;
   double prefactor_e_field_;
   arma::vec r;
-  arma::vec f_;
+  double f_;
   double f_value_;
   double omega_V_value_;
   arma::vec omega_V_;
@@ -89,7 +89,7 @@ public:
 
   void RK4(double time,int time_steps,std::string with_or_without_interactions,std::string make_files);
 
-  void task9(double d,int charge, double mass,arma::vec f,double time,int time_steps,std::string with_or_without_interactions,arma::vec w1,arma::vec w2,arma::vec w3);
+  void task9(double d,int charge, double mass,double f,double time,int time_steps,std::string with_or_without_interactions,arma::vec w1);
 };
 
 #endif
