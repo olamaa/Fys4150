@@ -337,7 +337,7 @@ void PenningTrap::RK4(double time,int time_steps,std::string with_or_without_int
         arma::mat vel = arma::zeros(particles_.size(),3);
         arma::mat update_pos;
         arma::mat update_vel;
-        for (int time_iteration = 0;time_iteration<= time_steps;time_iteration++){
+        for (int time_iteration = 0;time_iteration< time_steps;time_iteration++){
             current_time = dt*time_iteration;
 
             for (int current_particle = 0;current_particle < particles_.size(); current_particle++){ 
