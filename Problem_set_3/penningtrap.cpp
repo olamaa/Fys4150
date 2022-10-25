@@ -109,7 +109,7 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
         std::string filename; 
         std::ofstream ofile_;
         for (int current_particle_uniq = 0; current_particle_uniq < (particles_).size(); current_particle_uniq++){
-            filename = "Euler_Cromer_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_with_interactions.txt";        
+            filename = "Forward_Euler_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_with_interactions.txt";
             ofile_.open(filename);
             ofile_<< std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(0) <<
             std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(1) << 
@@ -129,7 +129,7 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
                 (particles_)[current_particle_uniq].change_position(((particles_)[current_particle_uniq].get_position()+((particles_)[current_particle_uniq].get_velocity()*dt)));
                 (particles_)[current_particle_uniq].change_velocity((particles_)[current_particle_uniq].get_velocity()+a*dt);
                 //filename = "particle_" + std::to_string(current_particle_uniq_1)+ "_with_interactions.txt";             
-                filename = "Euler_Cromer_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_with_interactions.txt";
+                filename = "Forward_Euler_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_with_interactions.txt";
                 ofile_.open(filename, std::ofstream::app);
                 ofile_<< std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(0) <<
                 std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(1) << 
@@ -149,7 +149,7 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
         std::ofstream ofile_;
         for (int current_particle_uniq = 0; current_particle_uniq < (particles_).size(); current_particle_uniq++){
             //filename = "particle_" + std::to_string(current_particle_uniq) + "_without_interactions.txt";           
-            filename = "Euler_Cromer_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_without_interactions.txt";
+            filename = "Forward_Euler_particle_" + std::to_string(current_particle_uniq) + "_n_steps_" + std::to_string(time_steps)+ "_without_interactions.txt";
             ofile_.open(filename);
             ofile_<< std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(0) <<
             std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq].get_position()(1) << 
@@ -179,7 +179,7 @@ void PenningTrap::forward_Euler(double time,int time_steps,std::string with_or_w
                 //std::cout << "line_254" << std::endl;
                 (particles_)[current_particle_uniq_1].change_position(((particles_)[current_particle_uniq_1].get_position()+((particles_)[current_particle_uniq_1].get_velocity()*dt)));
                 //filename = "particle_" + std::to_string(current_particle_uniq_1)+ "_without_interactions.txt";
-                filename = "Euler_Cromer_particle_" + std::to_string(current_particle_uniq_1) + "_n_steps_" + std::to_string(time_steps)+ "_without_interactions.txt";
+                filename = "Forward_Euler_particle_" + std::to_string(current_particle_uniq_1) + "_n_steps_" + std::to_string(time_steps)+ "_without_interactions.txt";
                 ofile_.open(filename, std::ofstream::app);
                 ofile_<< std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq_1].get_position()(0) <<
                 std::setw(width) << std::setprecision(prec) << (particles_)[current_particle_uniq_1].get_position()(1) << 
