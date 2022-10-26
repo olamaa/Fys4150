@@ -320,7 +320,7 @@ if str(input("Particles in trap for differnt amplitued? (y/n): "))== "y":
     ax[1].set_ylim(-5, 50)
     ax[2].set_ylim(-5, 50)
     for i in range(len(f_values)):
-        omega, trapped_particles = readfile_2('/textfiles/' + str(f_values[i]) + '00000.txt')
+        omega, trapped_particles = readfile_2(str(f_values[i]) + '00000.txt')
         omega_full, trapped_particles_full = readfile_2(str(f_values[i]) + '00000_with_hyades_full.txt')
         omega_resolved, trapped_particles_resolved = readfile_2(str(f_values[i]) + '00000_with_hyades_full_resolved.txt')
         ax[0].plot(omega, trapped_particles, label=f'f = {str((f_values[i]))}', color=colors[i], alpha=0.4)
