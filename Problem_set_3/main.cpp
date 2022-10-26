@@ -74,6 +74,7 @@ int main()
    }
 
     //task 9
+    std::cout << "The necessary files have been produced. Please abort the program." << std::endl;
     test_trap.task9(d,q,mass_Ca_II,{0.1,0.4,0.7},500,40000,"with",arma::linspace(1,2,1/0.02),arma::linspace(0.2,2,(1.6-1.2)/0.04),arma::linspace(1.1,1.7,(1.7-1.1)/0.06));
   
    return 0;
