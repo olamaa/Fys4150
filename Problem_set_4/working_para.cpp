@@ -6,11 +6,12 @@
 #include "omp.h"
 #include<chrono>
 
-
+//get boundary value
 inline int periodic(int i, int limit, int add) {
     return (i+limit+add) % (limit);
 }
 arma::mat initialize(int N, double temp,arma::vec& w,double& beta,double&E_tot,double&M_tot,std::string& rand){
+    // Initializes the spin matrix
     beta = 1/temp;
     E_tot = 0;
     M_tot = 0;
@@ -34,7 +35,7 @@ arma::mat initialize(int N, double temp,arma::vec& w,double& beta,double&E_tot,d
     else{  
         rand = "not_random";
     }
-
+    //calculate energy
     for (int j = 0;j<N;j++){
         for(int i = 0;i<N;i++){
             E_tot -= spin_matrix(j,i)*spin_matrix(j,periodic(i,N,1));
@@ -47,7 +48,7 @@ arma::mat initialize(int N, double temp,arma::vec& w,double& beta,double&E_tot,d
     }
     return spin_matrix;
 }
-
+//metropolis
 void metropolis(int N,arma::mat& spin_matrix,arma::vec w,double beta,double&E_tot,double&M_tot){
     std::random_device rd;
     std::mt19937_64 gen(rd());
@@ -91,7 +92,7 @@ void metropolis(int N,arma::mat& spin_matrix,arma::vec w,double beta,double&E_to
         } 
     }
 }
-
+//extract properties from the spin matrix and write to files
 void operations(int N, double temp,int number_of_cycles,std::string rand, std::string write_to_file_1,std::string write_to_file_2){   
     arma::vec w = {0,0};
     double n_spins = N*N;
@@ -145,13 +146,13 @@ void operations(int N, double temp,int number_of_cycles,std::string rand, std::s
     double average_abs_m = 0;
     double average_M_squared = 0;
     double average_m_squared = 0;
-    for (int i =15000;i<number_of_cycles;i++){
+    for (int i = 50000;i<number_of_cycles;i++){
         average_E += averages(0,i);
         average_E_squared += averages(1,i);
         average_abs_M += averages(2,i);
         average_M_squared += averages(3,i);
     }
-    double effective_number_of_cycles = number_of_cycles-15000;
+    double effective_number_of_cycles = number_of_cycles-50000;
     average_E = average_E/effective_number_of_cycles;
     average_E_squared = average_E_squared/effective_number_of_cycles;
     average_M_squared = average_M_squared/effective_number_of_cycles;
@@ -220,7 +221,7 @@ void operations(int N, double temp,int number_of_cycles,std::string rand, std::s
     }
 
 }
-
+//calling the functions
 int main(){
     //task 4
     operations(2,1,1e5,"True","False","False");
